@@ -22,7 +22,7 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
             margin: '20 1 1 1'
         });
 
-        var btnAprov = Ext.create('Ext.form.field.TextArea', {
+        var btnAp = Ext.create('Ext.form.field.TextArea', {
 
             fieldLabel: '<b>Comentário de Aprovação</b>',
             maxRows: 4,
@@ -56,15 +56,19 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
 
                             var gridLeste = Ext.getCmp('gridLeste');
 
+                            var dataVp = me.down('grid').getStore().getData().items[0].data;
+
                             var params = {
-                                obs: btnSo.getValue()
+                                emp: dataVp.idEmpresa,
+                                comentarioSo: btnSo.getValue(),
+                                comentarioAp: btnAp.getValue()
                             };
 
                             gridLeste.getStore().getProxy().setExtraParams(params);
 
                             gridLeste.getStore().load();
 
-                            Ext.Msg.alert('info', 'Observação Registrada!');
+                            Ext.Msg.alert('info', 'Comentário Registrado!');
 
                             me.close();
 
@@ -88,7 +92,7 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
                             {name:'marca',mapping:'marca'},
                             {name:'curva',mapping:'curva'},
                             {name:'vpDataLancamento',mapping:'vpDataLancamento'},
-                            {name:'vpQtde',mapping:'vpQtde'},
+                            {name:'vpQtde',mapping:'vpQtde'}
                             ]
             })
         });
@@ -175,7 +179,7 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
                                     ]
                                 },
                                 btnSo,
-                                btnAprov
+                                btnAp
                             ]
                         },
                         {

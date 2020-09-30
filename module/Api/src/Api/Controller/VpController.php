@@ -209,6 +209,14 @@ class VpController extends AbstractRestfulController
             
             $obs = $this->params()->fromQuery('obs',null);
 
+            if(empty($emp)){
+                
+                $this->setCallbackData();
+                $this->setMessage("Solicitação enviada com sucesso.");
+
+                return $this->getCallbackModel();
+            }
+
             if(empty($obs)){
                 $obs = 'Teste null';
             }
@@ -220,7 +228,7 @@ class VpController extends AbstractRestfulController
             $stmt = $conn->prepare($sql);
             $stmt->execute();
             $results = $stmt->fetchAll();
-            
+
             $hydrator = new ObjectProperty;
             $hydrator->addStrategy('data_so', new ValueStrategy);
             $stdClass = new StdClass;
@@ -254,6 +262,8 @@ class VpController extends AbstractRestfulController
             $usuario = $session['info']['usuarioSistema'];
 
             $emp = $this->params()->fromPost('emp',null);
+            $comentarioSo = $this->params()->fromPost('comentarioSo',null);
+            $comentarioAp = $this->params()->fromPost('comentarioAp',null);
 
             // $em = $this->getEntityManager();
             // $conn = $em->getConnection();

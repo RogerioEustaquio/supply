@@ -92,8 +92,12 @@ Ext.define('App.view.vp.VpToolbar', {
                 };
 
                 myStore.getProxy().setExtraParams(params);
-
                 myStore.load();
+
+                var gridLeste = me.up('panel').down('#PanelLeste').down('grid').getStore();
+
+                gridLeste.getProxy().setExtraParams({emp: null});
+                gridLeste.load();
             }
         });
 
@@ -136,16 +140,10 @@ Ext.define('App.view.vp.VpToolbar', {
                     objWindow = Ext.create('App.view.vp.ConfirmacaoVpWindow');
                     objWindow.show();
                 }
-
-                console.log(myGrid.getSelection()[0].data);
                 
                 var storeGrid = objWindow.down('panel').down('grid').getStore();
 
-                console.log(storeGrid);
-
                 storeGrid.add(myGrid.getSelection()[0].data);
-
-                console.log(storeGrid.getData());
 
                 objWindow.down('panel').down('#WinVendedor').setValue(myGrid.getSelection()[0].data.vpFuncionarioVenda);
 
