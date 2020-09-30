@@ -103,7 +103,10 @@ Ext.define('App.view.vp.VpToolbar', {
             tooltip: 'Limpar',
             margin: '1 1 1 4',
             handler: function(form) {
-
+            
+                empbx.setSelection(null);
+                dtinicio.setValue(null);
+                dtfim.setValue(null);
             }
         });
 
@@ -117,7 +120,7 @@ Ext.define('App.view.vp.VpToolbar', {
             },
             handler: function(form) {
 
-                var objWindow = Ext.getCmp('VpWindow');
+                var objWindow = Ext.getCmp('ConfirmacaoVpWindow');
 
                 var myGrid = me.up('container').down('grid');
                 
@@ -125,18 +128,26 @@ Ext.define('App.view.vp.VpToolbar', {
 
                     Ext.Msg.alert('Alerta','Favor selecionar uma venda pedida.');
 
-                    return null
+                    return null;
                     
                 }
 
-                console.log(myGrid.getSelection());
-                        
                 if(!objWindow){
-                    objWindow = Ext.create('App.view.vp.VpWindow');
+                    objWindow = Ext.create('App.view.vp.ConfirmacaoVpWindow');
                     objWindow.show();
                 }
 
-                objWindow.down('panel').down('#winCliente').setValue(myGrid.getSelection()[0].data.nomeCliente);
+                console.log(myGrid.getSelection()[0].data);
+                
+                var storeGrid = objWindow.down('panel').down('grid').getStore();
+
+                console.log(storeGrid);
+
+                storeGrid.add(myGrid.getSelection()[0].data);
+
+                console.log(storeGrid.getData());
+
+                objWindow.down('panel').down('#WinVendedor').setValue(myGrid.getSelection()[0].data.vpFuncionarioVenda);
 
             }
         });

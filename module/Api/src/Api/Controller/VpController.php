@@ -137,7 +137,8 @@ class VpController extends AbstractRestfulController
                    pkg_x2_help_estoque.get_estoque_ruptura_dias(A.ID_EMPRESA, A.ID_ITEM, A.ID_CATEGORIA, A.DATA_CREATED, 30) AS VP_DIAS_RUPTURA_30D,
                    'EVERTON' as vp_usuario_confirmacao,
                    sysdate as vp_data_confirmacao,
-                   'Comentário ....' as vp_comentario_confirmacao
+                   'Comentário ....' as vp_comentario_confirmacao,
+                   null status
                    
               FROM MS.VE_VENDA_PERDIDA  A,
                    MS.PESSOA            P,
@@ -177,6 +178,7 @@ class VpController extends AbstractRestfulController
             $results = $stmt->fetchAll();
 
             $hydrator = new ObjectProperty;
+            $hydrator->addStrategy('VP_QTDE', new ValueStrategy);
             $stdClass = new StdClass;
             $resultSet = new HydratingResultSet($hydrator, $stdClass);
             $resultSet->initialize($results);
@@ -211,24 +213,27 @@ class VpController extends AbstractRestfulController
                 $obs = 'Teste null';
             }
 
-            // $em = $this->getEntityManager();
-            // $conn = $em->getConnection();
+            $em = $this->getEntityManager();
+            $conn = $em->getConnection();
 
-            // $sql = "select count(*) count from FI_DESCONTO_COMERCIAL_NOTA where emp = '$emp' and numero_nota = '$nrnf'";
-            // $stmt = $conn->prepare($sql);
-            // $stmt->execute();
-            // $results = $stmt->fetchAll();
-            // $hydrator = new ObjectProperty;
-            // $stdClass = new StdClass;
-            // $resultSet = new HydratingResultSet($hydrator, $stdClass);
-            // $resultSet->initialize($results);
+            $sql = "select 'Rogerio' usuario, 'Teste null' comentario_so , to_char(sysdate, 'DD/MM/RRRR HH24:MI:SS') as data_so from dual";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $results = $stmt->fetchAll();
+            
+            $hydrator = new ObjectProperty;
+            $hydrator->addStrategy('data_so', new ValueStrategy);
+            $stdClass = new StdClass;
+            $resultSet = new HydratingResultSet($hydrator, $stdClass);
+            $resultSet->initialize($results);
 
             $data = array();
-            // foreach ($resultSet as $row) {
-            //     $data[] = $hydrator->extract($row);
-            // }
+            foreach ($resultSet as $row) {
+                $data[] = $hydrator->extract($row);
+            }
 
-            $data[] = array('usuario'=> 'Rogerio','obs'=> $obs);
+            // $data[] = array('usuario'=> 'Rogerio','obs'=> $obs, 'data' => '29/09/2020');
+            // $data[] = array('usuario'=> 'Joao','obs'=> $obs);
 
             $this->setCallbackData($data);
             $this->setMessage("Solicitação enviada com sucesso.");
