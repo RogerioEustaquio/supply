@@ -117,7 +117,7 @@ Ext.define('App.view.vp.VpToolbar', {
         var btnPlus = Ext.create('Ext.button.Button',{
             
             iconCls: 'fa fa-plus',
-            tooltip: 'Limpar',
+            tooltip: 'Comentar',
             margin: '2 6 2 2',
             renderer: function (v) {
                 return v;
@@ -146,7 +146,23 @@ Ext.define('App.view.vp.VpToolbar', {
                 storeGrid.add(myGrid.getSelection()[0].data);
 
                 objWindow.down('panel').down('#WinVendedor').setValue(myGrid.getSelection()[0].data.vpFuncionarioVenda);
+                objWindow.down('panel').down('#WinCliente').setValue(myGrid.getSelection()[0].data.nomeCliente);
 
+                objWindow.down('panel').down('#comentarioSo').setValue(myGrid.getSelection()[0].data.vpComentario);
+
+            }
+        });
+
+        var btntrash = Ext.create('Ext.button.Button',{
+            
+            iconCls: 'fa fa-times',
+            tooltip: 'Cancelar',
+            margin: '1 6 1 1',
+            handler: function(form) {
+            
+                empbx.setSelection(null);
+                dtinicio.setValue(null);
+                dtfim.setValue(null);
             }
         });
 

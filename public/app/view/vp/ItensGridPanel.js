@@ -52,7 +52,7 @@ Ext.define('App.view.vp.ItensGridPanel', {
                     width: 52
                 },
                 {
-                    text: 'Codigo',
+                    text: 'Código',
                     dataIndex: 'codItem',
                     width: 100
                 },
