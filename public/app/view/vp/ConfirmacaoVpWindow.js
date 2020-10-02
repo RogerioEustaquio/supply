@@ -41,8 +41,14 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
 
                 var urlAction = '/api/vp/inserir';
 
+                
+
+                var dataVp = me.down('grid').getStore().getData().items[0].data;
+
                 var param = {
-                    emp: null
+                    emp: dataVp.idEmpresa,
+                    idVendaPerdida: dataVp.idVendaPerdida,
+                    comentarioAp: btnAp.getValue()
                 };
 
                 Ext.Ajax.request({
@@ -56,15 +62,7 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
 
                             var gridLeste = Ext.getCmp('gridLeste');
 
-                            var dataVp = me.down('grid').getStore().getData().items[0].data;
-
-                            var params = {
-                                emp: dataVp.idEmpresa,
-                                comentarioSo: btnSo.getValue(),
-                                comentarioAp: btnAp.getValue()
-                            };
-
-                            gridLeste.getStore().getProxy().setExtraParams(params);
+                            gridLeste.getStore().getProxy().setExtraParams(param);
 
                             gridLeste.getStore().load();
 
@@ -112,7 +110,6 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
                             // padding: 5,
                             bodyPadding: '5 5 5 5',
                             items: [
-
                                 {
                                     xtype: 'form',
                                     layout: 'hbox',
@@ -120,9 +117,9 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
                                     items: [
                                         {
                                             xtype: 'fieldset',
-                                            title: 'Vendedor',
+                                            title: '<b>Data</b>',
                                             defaultType: 'textfield',
-                                            width: '50%',
+                                            width: '16%',
                                             margin: '0 6 6 0',
                                             defaults: {
                                                 anchor: '100%'
@@ -130,15 +127,32 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
                                             items: [
                                                 {
                                                     xtype: 'displayfield',
-                                                    id: 'WinVendedor'
+                                                    id: 'winData'
                                                 }
                                             ]
                                         },
                                         {
                                             xtype: 'fieldset',
-                                            title: 'Cliente',
+                                            title: '<b>Vendedor</b>',
                                             defaultType: 'textfield',
-                                            width: '50%',
+                                            width: '30%',
+                                            margin: '0 6 6 0',
+                                            defaults: {
+                                                anchor: '100%'
+                                            },
+                                            items: [
+                                                {
+                                                    xtype: 'displayfield',
+                                                    id: 'winVendedor'
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            xtype: 'fieldset',
+                                            title: '<b>Cliente</b>',
+                                            defaultType: 'textfield',
+                                            flex: 1,
+                                            // width: '44%',
                                             margin: '0 0 6 0',
                                             defaults: {
                                                 anchor: '100%'
@@ -146,7 +160,7 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
                                             items: [
                                                 {
                                                     xtype: 'displayfield',
-                                                    id: 'WinCliente'
+                                                    id: 'winCliente'
                                                 }
                                             ]
                                         }
@@ -202,9 +216,15 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
                                             width: 100
                                         },
                                         {
+                                            text: 'Estoque',
+                                            dataIndex: 'vpEstoque',
+                                            width: 80
+                                        },
+                                        {
                                             text: 'Lançamento',
                                             dataIndex: 'vpDataLancamento',
-                                            width: 100
+                                            width: 100,
+                                            hidden: true
                                         }
                                     ]
                                 },

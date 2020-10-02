@@ -145,8 +145,13 @@ Ext.define('App.view.vp.VpToolbar', {
 
                 storeGrid.add(myGrid.getSelection()[0].data);
 
-                objWindow.down('panel').down('#WinVendedor').setValue(myGrid.getSelection()[0].data.vpFuncionarioVenda);
-                objWindow.down('panel').down('#WinCliente').setValue(myGrid.getSelection()[0].data.nomeCliente);
+                objWindow.down('panel').down('#winData').setValue(myGrid.getSelection()[0].data.vpDataLancamento);
+
+                objWindow.down('panel').down('#winVendedor').setValue(myGrid.getSelection()[0].data.vpFuncionarioVenda);
+
+                var cliente = myGrid.getSelection()[0].data.idCliente + ' ' + myGrid.getSelection()[0].data.nomeCliente;
+
+                objWindow.down('panel').down('#winCliente').setValue(cliente);
 
                 objWindow.down('panel').down('#comentarioSo').setValue(myGrid.getSelection()[0].data.vpComentario);
 

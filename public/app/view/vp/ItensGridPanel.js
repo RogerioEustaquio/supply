@@ -9,6 +9,7 @@ Ext.define('App.view.vp.ItensGridPanel', {
         var myStore = Ext.create('Ext.data.Store', {
             model: Ext.create('Ext.data.Model', {
                     fields:[{name:'idEmpresa',mapping:'idEmpresa'},
+                            {name:'idVendaPerdida',mapping:'idVendaPerdida'},
                             {name:'idCliente',mapping:'idCliente'},
                             {name:'nomeCliente',mapping:'nomeCliente'},
                             {name:'codItem',mapping:'codItem'},
@@ -52,6 +53,11 @@ Ext.define('App.view.vp.ItensGridPanel', {
                     width: 52
                 },
                 {
+                    text: 'Data',
+                    dataIndex: 'vpDataLancamento',
+                    width: 132
+                },
+                {
                     text: 'Código',
                     dataIndex: 'codItem',
                     width: 100
@@ -73,11 +79,6 @@ Ext.define('App.view.vp.ItensGridPanel', {
                     width: 60
                 },
                 {
-                    text: 'Lançamento',
-                    dataIndex: 'vpDataLancamento',
-                    width: 100
-                },
-                {
                     text: 'Cod. Cli.',
                     dataIndex: 'idCliente',
                     width: 100,
@@ -87,7 +88,7 @@ Ext.define('App.view.vp.ItensGridPanel', {
                     text: 'Cliente',
                     dataIndex: 'nomeCliente',
                     flex: 1,
-                    minWidth: 100
+                    minWidth: 160
                 },
                 {
                     text: 'Usu. Venda',
@@ -98,7 +99,7 @@ Ext.define('App.view.vp.ItensGridPanel', {
                 {
                     text: 'Vendedor',
                     dataIndex: 'vpFuncionarioVenda',
-                    width: 100
+                    width: 160
                 },
                 {
                     text: 'Quantidade',

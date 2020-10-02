@@ -115,7 +115,11 @@ class VpController extends AbstractRestfulController
             $em = $this->getEntityManager();
 
             $sql = "--CREATE TABLE TMP_VP_SOLICITACAO AS
-            SELECT A.ID_EMPRESA, A.ID_ITEM, A.ID_CATEGORIA, A.ID_FUNCIONARIO,
+            SELECT A.ID_EMPRESA,
+                   A.ID_VENDA_PERDIDA,
+                   A.ID_ITEM,
+                   A.ID_CATEGORIA,
+                   A.ID_FUNCIONARIO,
                    D.APELIDO AS EMP,
                    A.ID_PESSOA AS ID_CLIENTE,
                    P.NOME AS NOME_CLIENTE,
@@ -125,7 +129,8 @@ class VpController extends AbstractRestfulController
                    s.id_curva_abc       AS CURVA,
                    A.ID_MOTIVO_VP AS ID_TIPO,
                    E.DESCRICAO AS TIPO,
-                   A.DATA_CREATED AS VP_DATA_LANCAMENTO,
+                   to_char(A.DATA_CREATED, 'DD/MM/RRRR HH24:MI:SS') VP_DATA_LANCAMENTO,
+                   --A.DATA_CREATED AS VP_DATA_LANCAMENTO,
                    A.USUARIO_CREATED AS VP_USUARIO_LANCAMENTO,
                    H.NOME AS VP_FUNCIONARIO_VENDA,
                    A.QTDE_ITEM AS VP_QTDE,
@@ -197,7 +202,7 @@ class VpController extends AbstractRestfulController
         return $this->getCallbackModel();
     }
 
-    public function listarvpobsAction()
+    public function listarvpcomentarioAction()
     {
         $data = array();
         
@@ -205,9 +210,8 @@ class VpController extends AbstractRestfulController
             $session = $this->getSession();
             $usuario = $session['info']['usuarioSistema'];
 
-            $emp = $this->params()->fromQuery('emp',null);
-            
-            $obs = $this->params()->fromQuery('obs',null);
+            $emp            = $this->params()->fromQuery('emp',null);
+            $idVendaPerdida = $this->params()->fromQuery('idVendaPerdida',null);
 
             if(empty($emp)){
                 
@@ -215,10 +219,6 @@ class VpController extends AbstractRestfulController
                 $this->setMessage("Solicitação enviada com sucesso.");
 
                 return $this->getCallbackModel();
-            }
-
-            if(empty($obs)){
-                $obs = 'Teste null';
             }
 
             $em = $this->getEntityManager();
@@ -261,32 +261,14 @@ class VpController extends AbstractRestfulController
             $session = $this->getSession();
             $usuario = $session['info']['usuarioSistema'];
 
-            $emp = $this->params()->fromPost('emp',null);
-            $comentarioSo = $this->params()->fromPost('comentarioSo',null);
-            $comentarioAp = $this->params()->fromPost('comentarioAp',null);
+            $emp            = $this->params()->fromPost('emp',null);
+            $idVendaPerdida = $this->params()->fromPost('idVendaPerdida',null);
+            $comentarioAp   = $this->params()->fromPost('comentarioAp',null);
+
+            $data = array();
 
             // $em = $this->getEntityManager();
             // $conn = $em->getConnection();
-
-            // $sql = "select count(*) count from FI_DESCONTO_COMERCIAL_NOTA where emp = '$emp' and numero_nota = '$nrnf'";
-            // $stmt = $conn->prepare($sql);
-            // $stmt->execute();
-            // $results = $stmt->fetchAll();
-            // $hydrator = new ObjectProperty;
-            // $stdClass = new StdClass;
-            // $resultSet = new HydratingResultSet($hydrator, $stdClass);
-            // $resultSet->initialize($results);
-
-            $data = array();
-            // foreach ($resultSet as $row) {
-            //     $data[] = $hydrator->extract($row);
-            // }
-            
-            // if($data[0]["count"] != 0 ){
-            //     $this->setCallbackData($data);
-            //     $this->setCallbackError("A NF selecionada já tem lançamento.");
-            //     return $this->getCallbackModel();
-            // }
 
             // $sql = "call pkg_fi_desconto_com_nota.inserir( :emp, :idlancamento, :numero_nota, :usuario)";
             // $stmt = $conn->prepare($sql);

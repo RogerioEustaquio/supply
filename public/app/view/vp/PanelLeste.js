@@ -4,6 +4,7 @@ Ext.define('App.view.vp.PanelLeste', {
     id: 'PanelLeste',
     width: 300,
     title: 'Comentários',
+    collapsible: true,
     layout: 'fit',
     constructor: function() {
         var me = this;
@@ -18,7 +19,7 @@ Ext.define('App.view.vp.PanelLeste', {
             proxy: {
                 type: 'ajax',
                 method:'POST',
-                url : BASEURL + '/api/vp/listarvpobs',
+                url : BASEURL + '/api/vp/listarvpcomentario',
                 encode: true,
                 timeout: 240000,
                 format: 'json',
