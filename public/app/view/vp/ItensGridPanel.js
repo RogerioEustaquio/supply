@@ -178,7 +178,6 @@ Ext.define('App.view.vp.ItensGridPanel', {
                         if (elements.status == 'Pendente'){
 
                             objTool.down('#btnComentario').setDisabled(false);
-                            objTool.down('#btnAtendimento').setDisabled(true);
                             objTool.down('#btnConcluir').setDisabled(true);
                             objTool.down('#btnCancelar').setDisabled(false);
 
@@ -187,7 +186,6 @@ Ext.define('App.view.vp.ItensGridPanel', {
                         if(elements.status == 'Aprovado'){
                             
                             objTool.down('#btnComentario').setDisabled(true);
-                            objTool.down('#btnAtendimento').setDisabled(true);
                             objTool.down('#btnConcluir').setDisabled(false);
                             objTool.down('#btnCancelar').setDisabled(false);
 
@@ -196,7 +194,6 @@ Ext.define('App.view.vp.ItensGridPanel', {
                         if(elements.status == 'Cancelado' || elements.status == 'Concluído'){
                             
                             objTool.down('#btnComentario').setDisabled(true);
-                            objTool.down('#btnAtendimento').setDisabled(true);
                             objTool.down('#btnConcluir').setDisabled(true);
                             objTool.down('#btnCancelar').setDisabled(true);
 

@@ -69,7 +69,7 @@ Ext.define('App.view.vp.VpToolbar', {
 
         var btncheck = Ext.create('Ext.button.Button',{
             
-            iconCls: 'fa fa-user-check',
+            iconCls: 'fa fa-check-double',
             id: 'btnConcluir',
             disabled: true,
             tooltip: 'Concluir',
@@ -104,25 +104,6 @@ Ext.define('App.view.vp.VpToolbar', {
 
             }
         });
-
-        var btnstar = Ext.create('Ext.button.Button',{
-            
-            iconCls: 'fa fa-check-double',
-            id: 'btnAtendimento',
-            disabled: true,
-            tooltip: 'Atendimento',
-            margin: '1 6 1 1',
-            handler: function(form) {
-
-                var objWindow = Ext.getCmp('AtendimentoVpWindow');
-
-                if(!objWindow){
-                    objWindow = Ext.create('App.view.vp.AtendimentoVpWindow');
-                    objWindow.show();
-                }
-            }
-        });
-
 
         var btntrash = Ext.create('Ext.button.Button',{
             
@@ -197,7 +178,6 @@ Ext.define('App.view.vp.VpToolbar', {
                     
                 }
 
-                btnstar.setDisabled(true);
                 btntrash.setDisabled(true);
 
                 var dtinicio = me.down('#dtinicio').getRawValue();
@@ -284,7 +264,6 @@ Ext.define('App.view.vp.VpToolbar', {
                 btnClean,
                 '->',
                 btnPlus,
-                btnstar,
                 btncheck,
                 btntrash
             ]

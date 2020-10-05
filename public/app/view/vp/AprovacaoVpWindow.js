@@ -64,7 +64,7 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                             gridLeste.getStore().getProxy().setExtraParams(param);
                             gridLeste.getStore().load();
 
-                            Ext.Msg.alert('info', 'Comentário Registrado!');
+                            // Ext.Msg.alert('info', 'Comentário Registrado!');
                             me.close();
 
                             var gridItens = Ext.getCmp('ItensGridPanel');
