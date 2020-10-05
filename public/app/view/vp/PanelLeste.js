@@ -11,9 +11,10 @@ Ext.define('App.view.vp.PanelLeste', {
 
         var myStore = Ext.create('Ext.data.Store', {
             model: Ext.create('Ext.data.Model', {
-                    fields:[{name:'comentarioSo', mapping:'comentarioSo'},
+                    fields:[{name:'comentario', mapping:'comentario'},
                             {name:'usuario' ,mapping:'usuario'},
-                            { name: 'dataSo', mapping:'dataSo', type: 'date', dateFormat: 'd/m/Y H:i:s' }
+                            { name: 'data', mapping:'data', type: 'date', dateFormat: 'd/m/Y H:i' },
+                            {name:'status' ,mapping:'status'},
                             ]
             }),
             proxy: {
@@ -48,13 +49,12 @@ Ext.define('App.view.vp.PanelLeste', {
                             renderer: function(v) {
                                 return '<b>' + v + '</b>';
                             }
-                        }, 
-                
+                        },
                         {
                             // menuDisabled: true,
                             text: 'Data',
-                            width: 140,
-                            dataIndex: 'dataSo',
+                            width: 126,
+                            dataIndex: 'data',
                             // renderer: Ext.util.Format.dateRenderer('d/m/Y H:i:s')
                         }
                     ],
@@ -63,7 +63,7 @@ Ext.define('App.view.vp.PanelLeste', {
                         ftype: 'rowbody',
                         getAdditionalData: function (data, idx, record, orig) {
                             return {
-                                rowBody: '<span>' + record.get("comentarioSo") + '</span>',
+                                rowBody: '<span>' +  record.get("status") + ': ' + record.get("comentario") + '</span>',
                                 rowBodyCls: "grid-body-cls"
                             };
                         }

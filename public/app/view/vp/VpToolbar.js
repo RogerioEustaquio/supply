@@ -67,6 +67,113 @@ Ext.define('App.view.vp.VpToolbar', {
             emptyText: '__/__/____'
         });
 
+        var btncheck = Ext.create('Ext.button.Button',{
+            
+            iconCls: 'fa fa-user-check',
+            id: 'btnConcluir',
+            disabled: true,
+            tooltip: 'Concluir',
+            margin: '1 6 1 1',
+            handler: function(form) {
+
+                var myGrid = me.up('container').down('grid');
+                            
+                if(myGrid.getSelection() == 0){
+
+                    Ext.Msg.alert('Alerta','Favor selecionar uma venda pedida.');
+                    return null;
+                    
+                }
+
+                var objWindow = Ext.getCmp('ConclusaoVpWindow');
+
+                if(!objWindow){
+                    objWindow = Ext.create('App.view.vp.ConclusaoVpWindow');
+                    objWindow.show();
+                }
+
+                var storeGrid = objWindow.down('panel').down('grid').getStore();
+                storeGrid.add(myGrid.getSelection()[0].data);
+
+                objWindow.down('panel').down('#winData').setValue(myGrid.getSelection()[0].data.vpDataLancamento);
+                objWindow.down('panel').down('#winVendedor').setValue(myGrid.getSelection()[0].data.vpFuncionarioVenda);
+
+                var cliente = myGrid.getSelection()[0].data.idCliente + ' ' + myGrid.getSelection()[0].data.nomeCliente;
+                objWindow.down('panel').down('#winCliente').setValue(cliente);
+                objWindow.down('panel').down('#comentarioSo').setValue(myGrid.getSelection()[0].data.vpComentario);
+
+            }
+        });
+
+        var btnstar = Ext.create('Ext.button.Button',{
+            
+            iconCls: 'fa fa-check-double',
+            id: 'btnAtendimento',
+            disabled: true,
+            tooltip: 'Atendimento',
+            margin: '1 6 1 1',
+            handler: function(form) {
+
+                var objWindow = Ext.getCmp('AtendimentoVpWindow');
+
+                if(!objWindow){
+                    objWindow = Ext.create('App.view.vp.AtendimentoVpWindow');
+                    objWindow.show();
+                }
+            }
+        });
+
+
+        var btntrash = Ext.create('Ext.button.Button',{
+            
+            iconCls: 'fa fa-times',
+            id: 'btnCancelar',
+            disabled: true,
+            tooltip: 'Cancelar',
+            margin: '1 6 1 1',
+            handler: function(form) {
+            
+                Ext.Msg.show({
+                    message: 'Confirmar Cancelamento.',
+                    buttons: Ext.Msg.YESNO,
+                    fn: function(btn) {
+                        
+                        if (btn === 'yes') {
+
+                            var myGrid = me.up('container').down('grid');
+                            
+                            if(myGrid.getSelection() == 0){
+
+                                Ext.Msg.alert('Alerta','Favor selecionar uma venda pedida.');
+                                return null;
+                                
+                            }
+
+                            var objWindow = Ext.getCmp('CancelamentoVpWindow');
+
+                            if(!objWindow){
+                                objWindow = Ext.create('App.view.vp.CancelamentoVpWindow');
+                                objWindow.show();
+                            }
+
+                            var storeGrid = objWindow.down('panel').down('grid').getStore();
+                            storeGrid.add(myGrid.getSelection()[0].data);
+
+                            objWindow.down('panel').down('#winData').setValue(myGrid.getSelection()[0].data.vpDataLancamento);
+                            objWindow.down('panel').down('#winVendedor').setValue(myGrid.getSelection()[0].data.vpFuncionarioVenda);
+
+                            var cliente = myGrid.getSelection()[0].data.idCliente + ' ' + myGrid.getSelection()[0].data.nomeCliente;
+                            objWindow.down('panel').down('#winCliente').setValue(cliente);
+                            objWindow.down('panel').down('#comentarioSo').setValue(myGrid.getSelection()[0].data.vpComentario);
+
+                        }else{
+                            console.log('Não Confirmado');
+                        }
+                    }
+                });
+            }
+        });
+
         var btnSearch = Ext.create('Ext.button.Button',{
             
             iconCls: 'fa fa-search',
@@ -81,6 +188,17 @@ Ext.define('App.view.vp.VpToolbar', {
                 if(me.down('#bxemp').getRawValue()){
                     var emp = me.down('#bxemp').selection.data.idEmpresa;
                 }
+
+                if(emp == ''){
+
+                    Ext.Msg.alert('Alerta','Selecione Empresa.');
+
+                    return null;
+                    
+                }
+
+                btnstar.setDisabled(true);
+                btntrash.setDisabled(true);
 
                 var dtinicio = me.down('#dtinicio').getRawValue();
                 var dtfim = me.down('#dtfim').getRawValue();
@@ -116,60 +234,45 @@ Ext.define('App.view.vp.VpToolbar', {
 
         var btnPlus = Ext.create('Ext.button.Button',{
             
-            iconCls: 'fa fa-plus',
-            tooltip: 'Comentar',
+            iconCls: 'fa fa-check',
+            id: 'btnComentario',
+            tooltip: 'Aprovar',
             margin: '2 6 2 2',
             renderer: function (v) {
                 return v;
             },
             handler: function(form) {
 
-                var objWindow = Ext.getCmp('ConfirmacaoVpWindow');
+                var objWindow = Ext.getCmp('AprovacaoVpWindow');
 
                 var myGrid = me.up('container').down('grid');
                 
                 if(myGrid.getSelection() == 0){
 
                     Ext.Msg.alert('Alerta','Favor selecionar uma venda pedida.');
-
                     return null;
                     
                 }
 
                 if(!objWindow){
-                    objWindow = Ext.create('App.view.vp.ConfirmacaoVpWindow');
+                    objWindow = Ext.create('App.view.vp.AprovacaoVpWindow');
                     objWindow.show();
                 }
                 
                 var storeGrid = objWindow.down('panel').down('grid').getStore();
-
                 storeGrid.add(myGrid.getSelection()[0].data);
 
                 objWindow.down('panel').down('#winData').setValue(myGrid.getSelection()[0].data.vpDataLancamento);
-
                 objWindow.down('panel').down('#winVendedor').setValue(myGrid.getSelection()[0].data.vpFuncionarioVenda);
 
                 var cliente = myGrid.getSelection()[0].data.idCliente + ' ' + myGrid.getSelection()[0].data.nomeCliente;
-
                 objWindow.down('panel').down('#winCliente').setValue(cliente);
-
                 objWindow.down('panel').down('#comentarioSo').setValue(myGrid.getSelection()[0].data.vpComentario);
 
             }
         });
 
-        var btntrash = Ext.create('Ext.button.Button',{
-            
-            iconCls: 'fa fa-times',
-            tooltip: 'Cancelar',
-            margin: '1 6 1 1',
-            handler: function(form) {
-            
-                empbx.setSelection(null);
-                dtinicio.setValue(null);
-                dtfim.setValue(null);
-            }
-        });
+
 
         Ext.applyIf(me, {
 
@@ -180,7 +283,10 @@ Ext.define('App.view.vp.VpToolbar', {
                 btnSearch,
                 btnClean,
                 '->',
-                btnPlus
+                btnPlus,
+                btnstar,
+                btncheck,
+                btntrash
             ]
 
         });

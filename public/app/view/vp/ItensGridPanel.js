@@ -3,41 +3,45 @@ Ext.define('App.view.vp.ItensGridPanel', {
     xtype: 'ItensGridPanel',
     id: 'ItensGridPanel',
     margin: '1 1 1 1',
+    requeri:[
+        'Ext.ux.util.Format'
+    ],
     constructor: function() {
         var me = this;
 
         var myStore = Ext.create('Ext.data.Store', {
             model: Ext.create('Ext.data.Model', {
-                    fields:[{name:'idEmpresa',mapping:'idEmpresa'},
-                            {name:'idVendaPerdida',mapping:'idVendaPerdida'},
-                            {name:'idCliente',mapping:'idCliente'},
-                            {name:'nomeCliente',mapping:'nomeCliente'},
-                            {name:'codItem',mapping:'codItem'},
-                            {name:'descItem',mapping:'descItem'},
-                            {name:'marca',mapping:'marca'},
-                            {name:'curva',mapping:'curva'},
-                            {name:'vpDataLancamento',mapping:'vpDataLancamento'},
-                            {name:'vpUsuarioLancamento',mapping:'vpUsuarioLancamento'},
-                            {name:'vpFuncionarioVenda',mapping:'vpFuncionarioVenda'},
-                            {name:'vpQtde',mapping:'vpQtde'},
-                            {name:'vpEstoque',mapping:'vpEstoque'},
-                            {name:'vpEventosRuptura_180d',mapping:'vpEventosRuptura_180d'},
-                            {name:'vpDiasRuptura_180d',mapping:'vpDiasRuptura_180d'},
-                            {name:'vpEventosRuptura_30d',mapping:'vpEventosRuptura_30d'},
-                            {name:'vpDiasRuptura_30d',mapping:'vpDiasRuptura_30d'},
-                            {name:'status',mapping:'status'}
+                    fields:[{name:'idEmpresa',mapping:'idEmpresa',  type: 'string'},
+                            {name:'idVendaPerdida',mapping:'idVendaPerdida',  type: 'string'},
+                            {name:'idCliente',mapping:'idCliente',  type: 'string'},
+                            {name:'nomeCliente',mapping:'nomeCliente',  type: 'string'},
+                            {name:'codItem',mapping:'codItem',  type: 'string'},
+                            {name:'descItem',mapping:'descItem',  type: 'string'},
+                            {name:'marca',mapping:'marca',  type: 'string'},
+                            {name:'curva',mapping:'curva',  type: 'string'},
+                            {name:'tipo',mapping:'tipo',  type: 'string'},
+                            {name:'vpDataLancamento', type: 'date', dateFormat: 'd/m/Y H:i' },
+                            {name:'vpUsuarioLancamento',mapping:'vpUsuarioLancamento',  type: 'string'},
+                            {name:'vpFuncionarioVenda',mapping:'vpFuncionarioVenda',  type: 'string'},
+                            {name:'vpQtde',mapping:'vpQtde',  type: 'number'},
+                            {name:'vpEstoque',mapping:'vpEstoque',  type: 'number'},
+                            {name:'vpEventosRuptura_180d',mapping:'vpEventosRuptura_180d',  type: 'number'},
+                            {name:'vpDiasRuptura_180d',mapping:'vpDiasRuptura_180d',  type: 'number'},
+                            {name:'vpEventosRuptura_30d',mapping:'vpEventosRuptura_30d',  type: 'number'},
+                            {name:'vpDiasRuptura_30d',mapping:'vpDiasRuptura_30d',  type: 'number'},
+                            {name:'status',mapping:'status',  type: 'string'}
                             ]
             }),
             proxy: {
                 type: 'ajax',
-                method:'POST',
+                // method:'POST',
                 url : BASEURL + '/api/vp/listarvp',
-                encode: true,
+                // encode: true,
                 timeout: 240000,
-                format: 'json',
+                // format: 'json',
                 reader: {
                     type: 'json',
-                    rootProperty: 'data'
+                    root: 'data'
                 }
             },
             autoLoad : false
@@ -48,14 +52,21 @@ Ext.define('App.view.vp.ItensGridPanel', {
             store: myStore,
             columns: [
                 {
+                    text: 'Data',
+                    width: 130,
+                    align: 'center',
+                    dataIndex: 'vpDataLancamento',
+                    // renderer: Ext.util.Format.dateRenderer('d/m/Y H:i')
+                    // renderer: function(v){
+
+                    //     var valor = Ext.util.Format.date(v,'m/d/Y H:i');
+                    //     return valor;
+                    // }
+                },
+                {
                     text: 'Emp',
                     dataIndex: 'emp',
                     width: 52
-                },
-                {
-                    text: 'Data',
-                    dataIndex: 'vpDataLancamento',
-                    width: 132
                 },
                 {
                     text: 'Código',
@@ -77,6 +88,11 @@ Ext.define('App.view.vp.ItensGridPanel', {
                     text: 'Curva',
                     dataIndex: 'curva',
                     width: 60
+                },
+                {
+                    text: 'Tipo',
+                    dataIndex: 'tipo',
+                    width: 80
                 },
                 {
                     text: 'Cod. Cli.',
@@ -137,11 +153,11 @@ Ext.define('App.view.vp.ItensGridPanel', {
                     dataIndex: 'status',
                     renderer: function (value, metaData, record) {
 
-                            if (value === 2)
+                            if (value === 'Concluído')
                                 metaData.tdCls = 'x-grid-cell-green-border';
-                            if (value === 3)
+                            if (value === 'Aprovado')
                                 metaData.tdCls = 'x-grid-cell-yellow-border';
-                            if (value === 4)
+                            if (value === 'Cancelado')
                                 metaData.tdCls = 'x-grid-cell-red-border';
 
                         return value;
@@ -157,8 +173,41 @@ Ext.define('App.view.vp.ItensGridPanel', {
 
                         var elements = record.record.data;
 
+                        var objTool = me.up('container').down('toolbar');
+
+                        if (elements.status == 'Pendente'){
+
+                            objTool.down('#btnComentario').setDisabled(false);
+                            objTool.down('#btnAtendimento').setDisabled(true);
+                            objTool.down('#btnConcluir').setDisabled(true);
+                            objTool.down('#btnCancelar').setDisabled(false);
+
+                        }
+
+                        if(elements.status == 'Aprovado'){
+                            
+                            objTool.down('#btnComentario').setDisabled(true);
+                            objTool.down('#btnAtendimento').setDisabled(true);
+                            objTool.down('#btnConcluir').setDisabled(false);
+                            objTool.down('#btnCancelar').setDisabled(false);
+
+                        }
+
+                        if(elements.status == 'Cancelado' || elements.status == 'Concluído'){
+                            
+                            objTool.down('#btnComentario').setDisabled(true);
+                            objTool.down('#btnAtendimento').setDisabled(true);
+                            objTool.down('#btnConcluir').setDisabled(true);
+                            objTool.down('#btnCancelar').setDisabled(true);
+
+                        }
+                        
+                        
+                        
+
                         var params = {
-                            emp : elements.idEmpresa
+                            emp : elements.idEmpresa,
+                            idVendaPerdida : elements.idVendaPerdida
                         };
                         // console.log(v.record.data);
 

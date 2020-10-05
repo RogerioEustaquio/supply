@@ -1,10 +1,10 @@
-Ext.define('App.view.vp.ConfirmacaoVpWindow', {
+Ext.define('App.view.vp.AtendimentoVpWindow', {
     extend: 'Ext.window.Window',
-    xtype: 'ConfirmacaoVpWindow',
-    id: 'ConfirmacaoVpWindow',
+    xtype: 'AtendimentoVpWindow',
+    id: 'AtendimentoVpWindow',
     height: Ext.getBody().getHeight() * 0.7,
     width: Ext.getBody().getWidth() * 0.7,
-    title: 'Confirmação de venda perdida',
+    title: 'Atendimento de Venda Perdida',
     requires:[
 
     ],
@@ -12,22 +12,13 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
     constructor: function() {
         var me = this;
 
-        var btnSo = Ext.create('Ext.form.field.TextArea', {
+        var btnCanc = Ext.create('Ext.form.field.TextArea', {
 
-            fieldLabel: '<b>Comentário de Solicitação</b>',
+            fieldLabel: '<b>Comentário de Atendimento</b>',
             maxRows: 4,
             labelAlign: 'top',
-            name: 'comentarioSo',
-            anchor: '98%',
-            margin: '20 1 1 1'
-        });
-
-        var btnAp = Ext.create('Ext.form.field.TextArea', {
-
-            fieldLabel: '<b>Comentário de Aprovação</b>',
-            maxRows: 4,
-            labelAlign: 'top',
-            name: 'comentarioAp',
+            name: 'comentarioAten',
+            maxLength: 100,
             anchor: '98%',
             margin: '1 1 1 1'
         });
@@ -39,16 +30,14 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
             margin: '1 6 1 1',
             handler: function(form) {
 
-                var urlAction = '/api/vp/inserir';
-
-                
+                var urlAction = '/api/vp/Antendimento';
 
                 var dataVp = me.down('grid').getStore().getData().items[0].data;
 
                 var param = {
                     emp: dataVp.idEmpresa,
                     idVendaPerdida: dataVp.idVendaPerdida,
-                    comentarioAp: btnAp.getValue()
+                    comentarioCanc: btnCanc.getValue()
                 };
 
                 Ext.Ajax.request({
@@ -66,7 +55,7 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
 
                             gridLeste.getStore().load();
 
-                            Ext.Msg.alert('info', 'Comentário Registrado!');
+                            Ext.Msg.alert('info', 'Atendimento de Comentário Registrado!');
 
                             me.close();
 
@@ -89,7 +78,7 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
                             {name:'descItem',mapping:'descItem'},
                             {name:'marca',mapping:'marca'},
                             {name:'curva',mapping:'curva'},
-                            {name:'vpDataLancamento',mapping:'vpDataLancamento'},
+                            {name:'vpDataLancamento', type: 'date', dateFormat: 'd/m/Y H:i:s' },
                             {name:'vpQtde',mapping:'vpQtde'}
                             ]
             })
@@ -119,7 +108,7 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
                                             xtype: 'fieldset',
                                             title: '<b>Data</b>',
                                             defaultType: 'textfield',
-                                            width: '16%',
+                                            width: '14%',
                                             margin: '0 6 6 0',
                                             defaults: {
                                                 anchor: '100%'
@@ -135,7 +124,7 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
                                             xtype: 'fieldset',
                                             title: '<b>Vendedor</b>',
                                             defaultType: 'textfield',
-                                            width: '30%',
+                                            width: '32%',
                                             margin: '0 6 6 0',
                                             defaults: {
                                                 anchor: '100%'
@@ -221,25 +210,23 @@ Ext.define('App.view.vp.ConfirmacaoVpWindow', {
                                             width: 80
                                         },
                                         {
-                                            text: 'Lançamento',
+                                            text: 'Data',
                                             dataIndex: 'vpDataLancamento',
                                             width: 100,
                                             hidden: true
                                         }
                                     ]
                                 },
-                                // btnSo,
                                 {
                                     xtype: 'displayfield',
-                                    // value: 'Comentario tesste',
                                     fieldLabel: '<b>Comentário de Solicitação</b>',
-                                    maxRows: 4,
+                                    scrollable : true,
                                     labelAlign: 'top',
                                     id: 'comentarioSo',
                                     anchor: '98%',
                                     margin: '20 1 1 1'
                                 },
-                                btnAp
+                                btnCanc
                             ]
                         },
                         {
