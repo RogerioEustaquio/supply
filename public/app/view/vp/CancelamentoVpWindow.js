@@ -25,8 +25,8 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
 
         var btnCancelar = Ext.create('Ext.button.Button',{
             
-            text: 'Cancelar',
-            tooltip: 'Cancelar',
+            text: 'Confirmar',
+            tooltip: 'Confirmar',
             margin: '1 6 1 1',
             handler: function(form) {
 
@@ -237,15 +237,6 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                                     anchor: '98%',
                                     margin: '20 1 1 1'
                                 },
-                                // {
-                                //     xtype: 'displayfield',
-                                //     fieldLabel: '<b>Comentário de Aprovação</b>',
-                                //     scrollable : true,
-                                //     labelAlign: 'top',
-                                //     id: 'comentarioAp',
-                                //     anchor: '98%',
-                                //     margin: '20 1 1 1'
-                                // },
                                 btnCanc
                             ]
                         },

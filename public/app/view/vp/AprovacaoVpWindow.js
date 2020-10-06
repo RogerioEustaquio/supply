@@ -105,37 +105,27 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
             tooltip: 'Cancelar',
             margin: '1 6 1 1',
             handler: function(form) {
-            
-                Ext.Msg.show({
-                    message: 'Confirmar Cancelamento.',
-                    buttons: Ext.Msg.YESNO,
-                    fn: function(btn) {
-                        
-                        if (btn === 'yes') {
 
-                            var objWindow = Ext.getCmp('CancelamentoVpWindow');
+                var objWindow = Ext.getCmp('CancelamentoVpWindow');
 
-                            if(!objWindow){
-                                objWindow = Ext.create('App.view.vp.CancelamentoVpWindow');
-                                objWindow.show();
-                            }
+                if(!objWindow){
+                    objWindow = Ext.create('App.view.vp.CancelamentoVpWindow');
+                    objWindow.show();
+                }
 
-                            var storeGrid = objWindow.down('panel').down('grid').getStore();
-                            var array = me.down('grid').getStore().data.items;
-                            
-                            array.forEach(function(record) {
+                var storeGrid = objWindow.down('panel').down('grid').getStore();
+                var array = me.down('grid').getStore().data.items;
+                
+                array.forEach(function(record) {
 
-                                storeGrid.add(record.data);
-                            });
-
-                            objWindow.down('panel').down('#winDatacan').setValue(me.down('#winData').getValue());
-                            objWindow.down('panel').down('#winVendedorcan').setValue(me.down('#winVendedor').getValue());
-                            objWindow.down('panel').down('#winClientecan').setValue(me.down('#winCliente').getValue());
-                            objWindow.down('panel').down('#comentarioSocan').setValue(me.down('#comentarioSo').getValue());
-
-                        }
-                    }
+                    storeGrid.add(record.data);
                 });
+
+                objWindow.down('panel').down('#winDatacan').setValue(me.down('#winData').getValue());
+                objWindow.down('panel').down('#winVendedorcan').setValue(me.down('#winVendedor').getValue());
+                objWindow.down('panel').down('#winClientecan').setValue(me.down('#winCliente').getValue());
+                objWindow.down('panel').down('#comentarioSocan').setValue(me.down('#comentarioSo').getValue());
+
             }
         });
 

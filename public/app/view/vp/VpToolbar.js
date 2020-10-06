@@ -125,53 +125,41 @@ Ext.define('App.view.vp.VpToolbar', {
             margin: '1 6 1 1',
             handler: function(form) {
             
-                Ext.Msg.show({
-                    message: 'Confirmar Cancelamento.',
-                    buttons: Ext.Msg.YESNO,
-                    fn: function(btn) {
-                        
-                        if (btn === 'yes') {
+                var myGrid = me.up('container').down('grid');
+                
+                if(myGrid.getSelection() == 0){
 
-                            var myGrid = me.up('container').down('grid');
-                            
-                            if(myGrid.getSelection() == 0){
+                    Ext.Msg.alert('Alerta','Favor selecionar uma venda pedida.');
+                    return null;
+                    
+                }
 
-                                Ext.Msg.alert('Alerta','Favor selecionar uma venda pedida.');
-                                return null;
-                                
-                            }
+                var objWindow = Ext.getCmp('CancelamentoVpWindow');
 
-                            var objWindow = Ext.getCmp('CancelamentoVpWindow');
+                if(!objWindow){
+                    objWindow = Ext.create('App.view.vp.CancelamentoVpWindow');
+                    objWindow.show();
+                }
 
-                            if(!objWindow){
-                                objWindow = Ext.create('App.view.vp.CancelamentoVpWindow');
-                                objWindow.show();
-                            }
+                var storeGrid = objWindow.down('panel').down('grid').getStore();
 
-                            var storeGrid = objWindow.down('panel').down('grid').getStore();
+                var exParams = {
+                    emp : myGrid.getSelection()[0].data.idEmpresa,
+                    idVendaPerdida : myGrid.getSelection()[0].data.idVendaPerdida,
+                    idItem: myGrid.getSelection()[0].data.idItem,
+                    idCategoria: myGrid.getSelection()[0].data.idCategoria
+                };
 
-                            var exParams = {
-                                emp : myGrid.getSelection()[0].data.idEmpresa,
-                                idVendaPerdida : myGrid.getSelection()[0].data.idVendaPerdida,
-                                idItem: myGrid.getSelection()[0].data.idItem,
-                                idCategoria: myGrid.getSelection()[0].data.idCategoria
-                            };
-            
-                            storeGrid.getProxy().setExtraParams(exParams);
-                            storeGrid.load();
+                storeGrid.getProxy().setExtraParams(exParams);
+                storeGrid.load();
 
-                            objWindow.down('panel').down('#winDatacan').setValue(myGrid.getSelection()[0].data.vpDataLancamento);
-                            objWindow.down('panel').down('#winVendedorcan').setValue(myGrid.getSelection()[0].data.vpFuncionarioVenda);
+                objWindow.down('panel').down('#winDatacan').setValue(myGrid.getSelection()[0].data.vpDataLancamento);
+                objWindow.down('panel').down('#winVendedorcan').setValue(myGrid.getSelection()[0].data.vpFuncionarioVenda);
 
-                            var cliente = myGrid.getSelection()[0].data.idCliente + ' ' + myGrid.getSelection()[0].data.nomeCliente;
-                            objWindow.down('panel').down('#winClientecan').setValue(cliente);
-                            objWindow.down('panel').down('#comentarioSocan').setValue(myGrid.getSelection()[0].data.vpComentario);
+                var cliente = myGrid.getSelection()[0].data.idCliente + ' ' + myGrid.getSelection()[0].data.nomeCliente;
+                objWindow.down('panel').down('#winClientecan').setValue(cliente);
+                objWindow.down('panel').down('#comentarioSocan').setValue(myGrid.getSelection()[0].data.vpComentario);
 
-                        }else{
-                            console.log('Não Confirmado');
-                        }
-                    }
-                });
             }
         });
 
