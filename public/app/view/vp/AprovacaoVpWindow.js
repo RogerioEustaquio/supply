@@ -2,8 +2,8 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
     extend: 'Ext.window.Window',
     xtype: 'AprovacaoVpWindow',
     id: 'AprovacaoVpWindow',
-    height: Ext.getBody().getHeight() * 0.7,
-    width: Ext.getBody().getWidth() * 0.7,
+    height: Ext.getBody().getHeight() * 0.8,
+    width: Ext.getBody().getWidth() * 0.9,
     title: 'Aprovação de venda perdida',
     requires:[
 
@@ -11,16 +11,6 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
     layout: 'fit',
     constructor: function() {
         var me = this;
-
-        var btnSo = Ext.create('Ext.form.field.TextArea', {
-
-            fieldLabel: '<b>Comentário de Solicitação</b>',
-            maxRows: 4,
-            labelAlign: 'top',
-            name: 'comentarioSo',
-            anchor: '98%',
-            margin: '20 1 1 1'
-        });
 
         var btnAp = Ext.create('Ext.form.field.TextArea', {
 
@@ -33,10 +23,10 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
             margin: '1 1 1 1'
         });
 
-        var btnConfirmar = Ext.create('Ext.button.Button',{
+        var btnAprovar = Ext.create('Ext.button.Button',{
             
-            text: 'Confirmar',
-            tooltip: 'Limpar',
+            text: 'Aprovar',
+            tooltip: 'Aprovar',
             margin: '1 6 1 1',
             handler: function(form) {
 
@@ -92,7 +82,61 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                             {name:'vpDataLancamento', type: 'date', dateFormat: 'd/m/Y H:i:s' },
                             {name:'vpQtde',mapping:'vpQtde'}
                             ]
-            })
+            }),
+            proxy: {
+                type: 'ajax',
+                url : BASEURL + '/api/vp/listaritenscategorias',
+                timeout: 240000,
+                reader: {
+                    type: 'json',
+                    root: 'data'
+                }
+            },
+            autoLoad : false
+        });
+
+
+        var btntrash = Ext.create('Ext.button.Button',{
+            
+            // iconCls: 'fa fa-times',
+            text: 'Cancelar Solicitação',
+            id: 'btnCancelarWin',
+            disabled: false,
+            tooltip: 'Cancelar',
+            margin: '1 6 1 1',
+            handler: function(form) {
+            
+                Ext.Msg.show({
+                    message: 'Confirmar Cancelamento.',
+                    buttons: Ext.Msg.YESNO,
+                    fn: function(btn) {
+                        
+                        if (btn === 'yes') {
+
+                            var objWindow = Ext.getCmp('CancelamentoVpWindow');
+
+                            if(!objWindow){
+                                objWindow = Ext.create('App.view.vp.CancelamentoVpWindow');
+                                objWindow.show();
+                            }
+
+                            var storeGrid = objWindow.down('panel').down('grid').getStore();
+                            var array = me.down('grid').getStore().data.items;
+                            
+                            array.forEach(function(record) {
+
+                                storeGrid.add(record.data);
+                            });
+
+                            objWindow.down('panel').down('#winDatacan').setValue(me.down('#winData').getValue());
+                            objWindow.down('panel').down('#winVendedorcan').setValue(me.down('#winVendedor').getValue());
+                            objWindow.down('panel').down('#winClientecan').setValue(me.down('#winCliente').getValue());
+                            objWindow.down('panel').down('#comentarioSocan').setValue(me.down('#comentarioSo').getValue());
+
+                        }
+                    }
+                });
+            }
         });
 
         Ext.applyIf(me, {
@@ -103,6 +147,13 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                     layout: 'border',
                     margin: '0 0 0 0',
                     items:[
+                        {
+                            xtype: 'toolbar',
+                            region: 'north',
+                            items:[
+                                btntrash
+                            ]
+                        },
                         {
                             xtype: 'form',
                             region: 'center',
@@ -228,7 +279,6 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                                         }
                                     ]
                                 },
-                                // btnSo,
                                 {
                                     xtype: 'displayfield',
                                     fieldLabel: '<b>Comentário de Solicitação</b>',
@@ -248,7 +298,7 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                             border: false,
                             items: [
                                 '->',
-                                btnConfirmar
+                                btnAprovar
                             ]
                         }
                     ]

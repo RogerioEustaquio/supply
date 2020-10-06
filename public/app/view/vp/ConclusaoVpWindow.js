@@ -2,8 +2,8 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
     extend: 'Ext.window.Window',
     xtype: 'ConclusaoVpWindow',
     id: 'ConclusaoVpWindow',
-    height: Ext.getBody().getHeight() * 0.7,
-    width: Ext.getBody().getWidth() * 0.7,
+    height: Ext.getBody().getHeight() * 0.8,
+    width: Ext.getBody().getWidth() * 0.8,
     title: 'Conclusão de Venda Perdida',
     requires:[
 
@@ -23,10 +23,10 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
             margin: '1 1 1 1'
         });
 
-        var btnConfirmar = Ext.create('Ext.button.Button',{
+        var btnConcluir = Ext.create('Ext.button.Button',{
             
-            text: 'Confirmar',
-            tooltip: 'Limpar',
+            text: 'Concluir',
+            tooltip: 'Concluir',
             margin: '1 6 1 1',
             handler: function(form) {
 
@@ -54,7 +54,7 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
                             gridLeste.getStore().getProxy().setExtraParams(param);
                             gridLeste.getStore().load();
 
-                            Ext.Msg.alert('info', 'Conclusão de Comentário Registrado!');
+                            // Ext.Msg.alert('info', 'Conclusão de Comentário Registrado!');
                             me.close();
 
                             var gridItens = Ext.getCmp('ItensGridPanel');
@@ -82,7 +82,17 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
                             {name:'vpDataLancamento', type: 'date', dateFormat: 'd/m/Y H:i:s' },
                             {name:'vpQtde',mapping:'vpQtde'}
                             ]
-            })
+            }),
+            proxy: {
+                type: 'ajax',
+                url : BASEURL + '/api/vp/listaritenscategorias',
+                timeout: 240000,
+                reader: {
+                    type: 'json',
+                    root: 'data'
+                }
+            },
+            autoLoad : true
         });
 
         Ext.applyIf(me, {
@@ -227,6 +237,15 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
                                     anchor: '98%',
                                     margin: '20 1 1 1'
                                 },
+                                {
+                                    xtype: 'displayfield',
+                                    fieldLabel: '<b>Comentário de Aprovação</b>',
+                                    scrollable : true,
+                                    labelAlign: 'top',
+                                    id: 'comentarioAp',
+                                    anchor: '98%',
+                                    margin: '20 1 1 1'
+                                },
                                 btnConc
                             ]
                         },
@@ -237,7 +256,7 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
                             border: false,
                             items: [
                                 '->',
-                                btnConfirmar
+                                btnConcluir
                             ]
                         }
                     ]

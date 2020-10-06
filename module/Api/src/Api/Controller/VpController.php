@@ -81,7 +81,7 @@ class VpController extends AbstractRestfulController
         return $this->getCallbackModel();
     }
 
-    public function listarVpAction()
+    public function listaritensAction()
     {
         $data = array();
 
@@ -135,6 +135,8 @@ class VpController extends AbstractRestfulController
                         H.NOME AS VP_FUNCIONARIO_VENDA,
                         A.QTDE_ITEM AS VP_QTDE,
                         A.OBSERVACAO AS VP_COMENTARIO,
+                        'Teste Aprovacao' VP_APROVACAO_COMENTARIO,
+                        'Teste Conclusao' VP_CONCLUSAO_COMENTARIO,
                         nvl(pkg_x2_help_estoque.get_estoque_posicao_qtde(A.ID_EMPRESA, A.ID_ITEM, A.ID_CATEGORIA, A.DATA_CREATED),0) AS VP_ESTOQUE,
                         pkg_x2_help_estoque.get_estoque_ruptura_eventos(A.ID_EMPRESA, A.ID_ITEM, A.ID_CATEGORIA, A.DATA_CREATED, 180) AS VP_EVENTOS_RUPTURA_180D,
                         pkg_x2_help_estoque.get_estoque_ruptura_dias(A.ID_EMPRESA, A.ID_ITEM, A.ID_CATEGORIA, A.DATA_CREATED, 180) AS VP_DIAS_RUPTURA_180D,
@@ -264,6 +266,55 @@ class VpController extends AbstractRestfulController
             $hydrator = new ObjectProperty;
             $hydrator->addStrategy('data', new ValueStrategy);
             $hydrator->addStrategy('status', new ValueStrategy);
+            $stdClass = new StdClass;
+            $resultSet = new HydratingResultSet($hydrator, $stdClass);
+            $resultSet->initialize($results);
+
+            $data = array();
+            foreach ($resultSet as $row) {
+                $data[] = $hydrator->extract($row);
+            }
+
+            $this->setCallbackData($data);
+            $this->setMessage("Solicitação enviada com sucesso.");
+            
+        } catch (\Exception $e) {
+            $this->setCallbackError($e->getMessage());
+        }
+        
+        return $this->getCallbackModel();
+    }
+
+    public function listaritenscategoriasAction()
+    {
+        $data = array();
+        
+        try {
+            $session = $this->getSession();
+            $usuario = $session['info']['usuarioSistema'];
+
+            $emp            = $this->params()->fromQuery('emp',null);
+            $idVendaPerdida = $this->params()->fromQuery('idVendaPerdida',null);
+            $idItem         = $this->params()->fromQuery('idItem',null);
+            $idCategoria    = $this->params()->fromQuery('idCategoria',null);
+
+            $em = $this->getEntityManager();
+            $conn = $em->getConnection();
+
+            $sql = "select 'RA' emp, '$emp' id_empresa, '$idVendaPerdida' id_venda_perdida from dual
+                    union
+                    select 'RJ' emp, '$emp' id_empresa, '$idVendaPerdida' id_venda_perdida from dual
+                    union
+                    select 'AP' emp, '$emp' id_empresa, '$idVendaPerdida' id_venda_perdida from dual";
+
+            $stmt = $conn->prepare($sql);
+            // $stmt->bindParam(':emp', $emp);
+            // $stmt->bindParam(':idVendaPerdida', $idVendaPerdida);
+            $stmt->execute();
+            $results = $stmt->fetchAll();
+
+            $hydrator = new ObjectProperty;
+            $hydrator->addStrategy('emp', new ValueStrategy);
             $stdClass = new StdClass;
             $resultSet = new HydratingResultSet($hydrator, $stdClass);
             $resultSet->initialize($results);

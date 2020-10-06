@@ -35,7 +35,7 @@ Ext.define('App.view.vp.ItensGridPanel', {
             proxy: {
                 type: 'ajax',
                 // method:'POST',
-                url : BASEURL + '/api/vp/listarvp',
+                url : BASEURL + '/api/vp/listaritens',
                 // encode: true,
                 timeout: 240000,
                 // format: 'json',

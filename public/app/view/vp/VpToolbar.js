@@ -93,7 +93,16 @@ Ext.define('App.view.vp.VpToolbar', {
                 }
 
                 var storeGrid = objWindow.down('panel').down('grid').getStore();
-                storeGrid.add(myGrid.getSelection()[0].data);
+
+                var exParams = {
+                    emp : myGrid.getSelection()[0].data.idEmpresa,
+                    idVendaPerdida : myGrid.getSelection()[0].data.idVendaPerdida,
+                    idItem: myGrid.getSelection()[0].data.idItem,
+                    idCategoria: myGrid.getSelection()[0].data.idCategoria
+                };
+
+                storeGrid.getProxy().setExtraParams(exParams);
+                storeGrid.load();
 
                 objWindow.down('panel').down('#winData').setValue(myGrid.getSelection()[0].data.vpDataLancamento);
                 objWindow.down('panel').down('#winVendedor').setValue(myGrid.getSelection()[0].data.vpFuncionarioVenda);
@@ -101,6 +110,8 @@ Ext.define('App.view.vp.VpToolbar', {
                 var cliente = myGrid.getSelection()[0].data.idCliente + ' ' + myGrid.getSelection()[0].data.nomeCliente;
                 objWindow.down('panel').down('#winCliente').setValue(cliente);
                 objWindow.down('panel').down('#comentarioSo').setValue(myGrid.getSelection()[0].data.vpComentario);
+
+                objWindow.down('panel').down('#comentarioAp').setValue(myGrid.getSelection()[0].data.vpAprovacaoComentario);
 
             }
         });
@@ -138,14 +149,23 @@ Ext.define('App.view.vp.VpToolbar', {
                             }
 
                             var storeGrid = objWindow.down('panel').down('grid').getStore();
-                            storeGrid.add(myGrid.getSelection()[0].data);
 
-                            objWindow.down('panel').down('#winData').setValue(myGrid.getSelection()[0].data.vpDataLancamento);
-                            objWindow.down('panel').down('#winVendedor').setValue(myGrid.getSelection()[0].data.vpFuncionarioVenda);
+                            var exParams = {
+                                emp : myGrid.getSelection()[0].data.idEmpresa,
+                                idVendaPerdida : myGrid.getSelection()[0].data.idVendaPerdida,
+                                idItem: myGrid.getSelection()[0].data.idItem,
+                                idCategoria: myGrid.getSelection()[0].data.idCategoria
+                            };
+            
+                            storeGrid.getProxy().setExtraParams(exParams);
+                            storeGrid.load();
+
+                            objWindow.down('panel').down('#winDatacan').setValue(myGrid.getSelection()[0].data.vpDataLancamento);
+                            objWindow.down('panel').down('#winVendedorcan').setValue(myGrid.getSelection()[0].data.vpFuncionarioVenda);
 
                             var cliente = myGrid.getSelection()[0].data.idCliente + ' ' + myGrid.getSelection()[0].data.nomeCliente;
-                            objWindow.down('panel').down('#winCliente').setValue(cliente);
-                            objWindow.down('panel').down('#comentarioSo').setValue(myGrid.getSelection()[0].data.vpComentario);
+                            objWindow.down('panel').down('#winClientecan').setValue(cliente);
+                            objWindow.down('panel').down('#comentarioSocan').setValue(myGrid.getSelection()[0].data.vpComentario);
 
                         }else{
                             console.log('Não Confirmado');
@@ -231,7 +251,7 @@ Ext.define('App.view.vp.VpToolbar', {
 
                     Ext.Msg.alert('Alerta','Favor selecionar uma venda pedida.');
                     return null;
-                    
+
                 }
 
                 if(!objWindow){
@@ -240,7 +260,16 @@ Ext.define('App.view.vp.VpToolbar', {
                 }
                 
                 var storeGrid = objWindow.down('panel').down('grid').getStore();
-                storeGrid.add(myGrid.getSelection()[0].data);
+
+                var exParams = {
+                    emp : myGrid.getSelection()[0].data.idEmpresa,
+                    idVendaPerdida : myGrid.getSelection()[0].data.idVendaPerdida,
+                    idItem: myGrid.getSelection()[0].data.idItem,
+                    idCategoria: myGrid.getSelection()[0].data.idCategoria
+                };
+
+                storeGrid.getProxy().setExtraParams(exParams);
+                storeGrid.load();
 
                 objWindow.down('panel').down('#winData').setValue(myGrid.getSelection()[0].data.vpDataLancamento);
                 objWindow.down('panel').down('#winVendedor').setValue(myGrid.getSelection()[0].data.vpFuncionarioVenda);

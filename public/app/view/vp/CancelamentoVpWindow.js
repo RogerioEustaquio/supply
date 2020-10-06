@@ -23,10 +23,10 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
             margin: '1 1 1 1'
         });
 
-        var btnConfirmar = Ext.create('Ext.button.Button',{
+        var btnCancelar = Ext.create('Ext.button.Button',{
             
-            text: 'Confirmar',
-            tooltip: 'Limpar',
+            text: 'Cancelar',
+            tooltip: 'Cancelar',
             margin: '1 6 1 1',
             handler: function(form) {
 
@@ -54,7 +54,7 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                             gridLeste.getStore().getProxy().setExtraParams(param);
                             gridLeste.getStore().load();
 
-                            Ext.Msg.alert('info', 'Cancelamento de Comentário Registrado!');
+                            // Ext.Msg.alert('info', 'Cancelamento de Comentário Registrado!');
                             me.close();
 
                             var gridItens = Ext.getCmp('ItensGridPanel');
@@ -82,7 +82,17 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                             {name:'vpDataLancamento', type: 'date', dateFormat: 'd/m/Y H:i:s' },
                             {name:'vpQtde',mapping:'vpQtde'}
                             ]
-            })
+            }),
+            proxy: {
+                type: 'ajax',
+                url : BASEURL + '/api/vp/listaritenscategorias',
+                timeout: 240000,
+                reader: {
+                    type: 'json',
+                    root: 'data'
+                }
+            },
+            autoLoad : false
         });
 
         Ext.applyIf(me, {
@@ -117,7 +127,7 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                                             items: [
                                                 {
                                                     xtype: 'displayfield',
-                                                    id: 'winData'
+                                                    id: 'winDatacan'
                                                 }
                                             ]
                                         },
@@ -133,7 +143,7 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                                             items: [
                                                 {
                                                     xtype: 'displayfield',
-                                                    id: 'winVendedor'
+                                                    id: 'winVendedorcan'
                                                 }
                                             ]
                                         },
@@ -150,7 +160,7 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                                             items: [
                                                 {
                                                     xtype: 'displayfield',
-                                                    id: 'winCliente'
+                                                    id: 'winClientecan'
                                                 }
                                             ]
                                         }
@@ -223,10 +233,19 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                                     fieldLabel: '<b>Comentário de Solicitação</b>',
                                     scrollable : true,
                                     labelAlign: 'top',
-                                    id: 'comentarioSo',
+                                    id: 'comentarioSocan',
                                     anchor: '98%',
                                     margin: '20 1 1 1'
                                 },
+                                // {
+                                //     xtype: 'displayfield',
+                                //     fieldLabel: '<b>Comentário de Aprovação</b>',
+                                //     scrollable : true,
+                                //     labelAlign: 'top',
+                                //     id: 'comentarioAp',
+                                //     anchor: '98%',
+                                //     margin: '20 1 1 1'
+                                // },
                                 btnCanc
                             ]
                         },
@@ -237,7 +256,7 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                             border: false,
                             items: [
                                 '->',
-                                btnConfirmar
+                                btnCancelar
                             ]
                         }
                     ]
