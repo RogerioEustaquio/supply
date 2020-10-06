@@ -251,7 +251,7 @@ class VpController extends AbstractRestfulController
                          x2_vp_status t
                     where c.id_empresa = s.id_empresa
                     and c.id_venda_perdida = s.id_venda_perdida
-                    and s.id_status = t.id_status
+                    and c.id_status = t.id_status
                     and c.id_empresa = :emp
                     and c.id_venda_perdida = :idVendaPerdida
                     order by data1 desc
