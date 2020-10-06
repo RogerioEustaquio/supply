@@ -62,6 +62,7 @@ Ext.define('App.view.vp.PanelLeste', {
                     features: [{
                         ftype: 'rowbody',
                         getAdditionalData: function (data, idx, record, orig) {
+
                             return {
                                 rowBody: '<span>' +  record.get("status") + ': ' + record.get("comentario") + '</span>',
                                 rowBodyCls: "grid-body-cls"
