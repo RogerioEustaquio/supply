@@ -1,74 +1,25 @@
 Ext.define('App.view.vp.AprovacaoVpWindow', {
     extend: 'Ext.window.Window',
-    xtype: 'AprovacaoVpWindow',
-    id: 'AprovacaoVpWindow',
+    xtype: 'aprovacaovpwindow',
+    itemId: 'aprovacaovpwindow',
     height: Ext.getBody().getHeight() * 0.8,
     width: Ext.getBody().getWidth() * 0.9,
     title: 'Aprovação de venda perdida',
-    requires:[
+    requires: [],
 
-    ],
     layout: 'fit',
-    constructor: function() {
+    vpItem: null,
+
+    initComponent: function(config) {
         var me = this;
+        // console.log(me.vpItem);
 
-        var btnAp = Ext.create('Ext.form.field.TextArea', {
-
-            fieldLabel: '<b>Comentário de Aprovação</b>',
-            maxRows: 4,
-            labelAlign: 'top',
-            name: 'comentarioAp',
-            maxLength: 100,
-            anchor: '98%',
-            margin: '1 1 1 1'
-        });
-
-        var btnAprovar = Ext.create('Ext.button.Button',{
-            
-            text: 'Aprovar',
-            tooltip: 'Aprovar',
-            margin: '1 6 1 1',
-            handler: function(form) {
-
-                var urlAction = '/api/vp/Aprovar';
-
-                var dataVp = me.down('grid').getStore().getData().items[0].data;
-
-                var param = {
-                    emp: dataVp.idEmpresa,
-                    idVendaPerdida: dataVp.idVendaPerdida,
-                    comentarioAp: btnAp.getValue()
-                };
-
-                Ext.Ajax.request({
-                    url : BASEURL + urlAction,
-                    method: 'POST',
-                    params: param,
-                    success: function (response) {
-
-                        var result = Ext.decode(response.responseText);
-                        if(result.success){
-
-                            var gridLeste = Ext.getCmp('gridLeste');
-
-                            gridLeste.getStore().getProxy().setExtraParams(param);
-                            gridLeste.getStore().load();
-
-                            // Ext.Msg.alert('info', 'Comentário Registrado!');
-                            me.close();
-
-                            var gridItens = Ext.getCmp('ItensGridPanel');
-                            gridItens.getStore().reload();
-
-                        }else{
-                            Ext.Msg.alert('info', result.message);
-                        }
-
-                    }
-                });
-
-            }
-        });
+        var params = {
+            idEmpresa: me.vpItem.idEmpresa,
+            idVendaPerdida: me.vpItem.idVendaPerdida,
+            idItem: me.vpItem.idItem,
+            idCategoria: me.vpItem.idCategoria
+        };
 
         var myStore = Ext.create('Ext.data.Store', {
             model: Ext.create('Ext.data.Model', {
@@ -87,46 +38,27 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                 type: 'ajax',
                 url : BASEURL + '/api/vp/listaritenscategorias',
                 timeout: 240000,
+                params: params,
                 reader: {
                     type: 'json',
                     root: 'data'
                 }
             },
-            autoLoad : false
+            autoLoad: true
         });
 
+        // myStore.on('render', function(){});
 
-        var btntrash = Ext.create('Ext.button.Button',{
+
+        var btnCancelar = Ext.create('Ext.button.Button',{
             
             // iconCls: 'fa fa-times',
             text: 'Cancelar Solicitação',
-            id: 'btnCancelarWin',
+            itemId: 'btncancelarwin',
             disabled: false,
             tooltip: 'Cancelar',
             margin: '1 6 1 1',
-            handler: function(form) {
-
-                var objWindow = Ext.getCmp('CancelamentoVpWindow');
-
-                if(!objWindow){
-                    objWindow = Ext.create('App.view.vp.CancelamentoVpWindow');
-                    objWindow.show();
-                }
-
-                var storeGrid = objWindow.down('panel').down('grid').getStore();
-                var array = me.down('grid').getStore().data.items;
-                
-                array.forEach(function(record) {
-
-                    storeGrid.add(record.data);
-                });
-
-                objWindow.down('panel').down('#winDatacan').setValue(me.down('#winData').getValue());
-                objWindow.down('panel').down('#winVendedorcan').setValue(me.down('#winVendedor').getValue());
-                objWindow.down('panel').down('#winClientecan').setValue(me.down('#winCliente').getValue());
-                objWindow.down('panel').down('#comentarioSocan').setValue(me.down('#comentarioSo').getValue());
-
-            }
+            handler: me.onCancelarClick
         });
 
         Ext.applyIf(me, {
@@ -141,7 +73,7 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                             xtype: 'toolbar',
                             region: 'north',
                             items:[
-                                btntrash
+                                btnCancelar
                             ]
                         },
                         {
@@ -168,7 +100,7 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                                             items: [
                                                 {
                                                     xtype: 'displayfield',
-                                                    id: 'winData'
+                                                    value: me.vpItem.vpDataLancamento
                                                 }
                                             ]
                                         },
@@ -184,7 +116,7 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                                             items: [
                                                 {
                                                     xtype: 'displayfield',
-                                                    id: 'winVendedor'
+                                                    value: me.vpItem.vpFuncionarioVenda
                                                 }
                                             ]
                                         },
@@ -201,7 +133,7 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                                             items: [
                                                 {
                                                     xtype: 'displayfield',
-                                                    id: 'winCliente'
+                                                    value: me.vpItem.idCliente + ' ' + me.vpItem.nomeCliente
                                                 }
                                             ]
                                         }
@@ -274,11 +206,21 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                                     fieldLabel: '<b>Comentário de Solicitação</b>',
                                     scrollable : true,
                                     labelAlign: 'top',
-                                    id: 'comentarioSo',
+                                    itemId: 'comentarioSo',
                                     anchor: '98%',
-                                    margin: '20 1 1 1'
+                                    margin: '20 1 1 1',
+                                    value: me.vpItem.vpComentario
                                 },
-                                btnAp
+                                {
+                                    xtype: 'textarea',
+                                    fieldLabel: '<b>Comentário de Aprovação</b>',
+                                    maxRows: 4,
+                                    labelAlign: 'top',
+                                    name: 'comentarioAp',
+                                    maxLength: 100,
+                                    anchor: '98%',
+                                    margin: '1 1 1 1'
+                                }
                             ]
                         },
                         {
@@ -288,7 +230,12 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                             border: false,
                             items: [
                                 '->',
-                                btnAprovar
+                                {
+                                    text: 'Aprovar',
+                                    tooltip: 'Aprovar',
+                                    margin: '1 6 1 1',
+                                    handler: me.onAprovarClick
+                                }
                             ]
                         }
                     ]
@@ -299,6 +246,72 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
 
         me.callParent(arguments);
 
+    },
+
+    onCancelarClick: function(btn){
+        var me = btn.up('window');
+
+        me.close();
+
+        var win = Ext.create('App.view.vp.CancelamentoVpWindow', {
+            vpItem: me.vpItem
+        });
+
+        win.show();
+
+
+    },
+
+    onAprovarClick: function(btn){
+        var me = btn.up('window'),
+            notyType = 'success',
+            notyText = 'Solicitação aprovada com sucesso!';
+
+        var param = {
+            idEmpresa: me.vpItem.idEmpresa,
+            idVendaPerdida: me.vpItem.idVendaPerdida,
+            comentarioAp: me.down('textarea[name=comentarioAp]').getValue()
+        };
+
+        me.setLoading({msg: '<b>Salvando os dados...</b>'});
+
+        Ext.Ajax.request({
+            url : BASEURL + '/api/vp/aprovar',
+            method: 'POST',
+            params: param,
+            success: function (response) {
+                var result = Ext.decode(response.responseText);
+
+                if(!result.success){
+                    notyType = 'error';
+                    notyText = result.message;
+                    window.setLoading(false);
+                }
+
+                me.noty(notyType, notyText);
+
+                if(result.success){
+
+                    Ext.GlobalEvents.fireEvent('vpsolicitacaoaprovada', {
+                        idEmpresa: me.vpItem.idEmpresa,
+                        idVendaPerdida: me.vpItem.idVendaPerdida
+                    });
+                    
+                    me.close();
+                }
+            }
+        });
+
+    },
+
+    noty: function(notyType, notyText){
+        new Noty({
+            theme: 'relax',
+            layout: 'bottomRight',
+            type: notyType,
+            timeout: 3000,
+            text: notyText
+        }).show();
     }
 
 });

@@ -1,7 +1,7 @@
 Ext.define('App.view.vp.ConclusaoVpWindow', {
     extend: 'Ext.window.Window',
-    xtype: 'ConclusaoVpWindow',
-    id: 'ConclusaoVpWindow',
+    xtype: 'conclusaovpwindow',
+    itemId: 'conclusaovpwindow',
     height: Ext.getBody().getHeight() * 0.8,
     width: Ext.getBody().getWidth() * 0.8,
     title: 'Conclusão de Venda Perdida',
@@ -9,66 +9,17 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
 
     ],
     layout: 'fit',
-    constructor: function() {
+    vpItem: null,
+
+    initComponent: function() {
         var me = this;
 
-        var btnConc = Ext.create('Ext.form.field.TextArea', {
-
-            fieldLabel: '<b>Comentário de Conclusão</b>',
-            maxRows: 4,
-            labelAlign: 'top',
-            name: 'comentarioConc',
-            maxLength: 100,
-            anchor: '98%',
-            margin: '1 1 1 1'
-        });
-
-        var btnConcluir = Ext.create('Ext.button.Button',{
-            
-            text: 'Concluir',
-            tooltip: 'Concluir',
-            margin: '1 6 1 1',
-            handler: function(form) {
-
-                var urlAction = '/api/vp/Concluir';
-
-                var dataVp = me.down('grid').getStore().getData().items[0].data;
-
-                var param = {
-                    emp: dataVp.idEmpresa,
-                    idVendaPerdida: dataVp.idVendaPerdida,
-                    comentarioConc: btnConc.getValue()
-                };
-
-                Ext.Ajax.request({
-                    url : BASEURL + urlAction,
-                    method: 'POST',
-                    params: param,
-                    success: function (response) {
-
-                        var result = Ext.decode(response.responseText);
-                        if(result.success){
-
-                            var gridLeste = Ext.getCmp('gridLeste');
-
-                            gridLeste.getStore().getProxy().setExtraParams(param);
-                            gridLeste.getStore().load();
-
-                            // Ext.Msg.alert('info', 'Conclusão de Comentário Registrado!');
-                            me.close();
-
-                            var gridItens = Ext.getCmp('ItensGridPanel');
-                            gridItens.getStore().reload();
-
-                        }else{
-                            Ext.Msg.alert('info', result.message);
-                        }
-
-                    }
-                });
-
-            }
-        });
+        var params = {
+            idEmpresa: me.vpItem.idEmpresa,
+            idVendaPerdida: me.vpItem.idVendaPerdida,
+            idItem: me.vpItem.idItem,
+            idCategoria: me.vpItem.idCategoria
+        };
 
         var myStore = Ext.create('Ext.data.Store', {
             model: Ext.create('Ext.data.Model', {
@@ -87,6 +38,7 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
                 type: 'ajax',
                 url : BASEURL + '/api/vp/listaritenscategorias',
                 timeout: 240000,
+                params: params,
                 reader: {
                     type: 'json',
                     root: 'data'
@@ -127,7 +79,7 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
                                             items: [
                                                 {
                                                     xtype: 'displayfield',
-                                                    id: 'winData'
+                                                    value: me.vpItem.vpDataLancamento
                                                 }
                                             ]
                                         },
@@ -143,7 +95,7 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
                                             items: [
                                                 {
                                                     xtype: 'displayfield',
-                                                    id: 'winVendedor'
+                                                    value: me.vpItem.vpFuncionarioVenda
                                                 }
                                             ]
                                         },
@@ -160,7 +112,7 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
                                             items: [
                                                 {
                                                     xtype: 'displayfield',
-                                                    id: 'winCliente'
+                                                    value: me.vpItem.idCliente + ' ' + me.vpItem.nomeCliente
                                                 }
                                             ]
                                         }
@@ -235,7 +187,8 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
                                     labelAlign: 'top',
                                     id: 'comentarioSo',
                                     anchor: '98%',
-                                    margin: '20 1 1 1'
+                                    margin: '20 1 1 1',
+                                    value: me.vpItem.vpComentario
                                 },
                                 {
                                     xtype: 'displayfield',
@@ -244,9 +197,19 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
                                     labelAlign: 'top',
                                     id: 'comentarioAp',
                                     anchor: '98%',
-                                    margin: '20 1 1 1'
+                                    margin: '20 1 1 1',
+                                    value: me.vpItem.vpAprovacaoComentario
                                 },
-                                btnConc
+                                {
+                                    xtype: 'textarea',
+                                    fieldLabel: '<b>Comentário de Conclusão</b>',
+                                    maxRows: 4,
+                                    labelAlign: 'top',
+                                    name: 'comentarioConc',
+                                    maxLength: 100,
+                                    anchor: '98%',
+                                    margin: '1 1 1 1'
+                                }
                             ]
                         },
                         {
@@ -256,7 +219,13 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
                             border: false,
                             items: [
                                 '->',
-                                btnConcluir
+                                {
+                                    xtype: 'button',
+                                    text: 'Concluir',
+                                    tooltip: 'Concluir',
+                                    margin: '1 6 1 1',
+                                    handler: me.onConcluirClick
+                                }
                             ]
                         }
                     ]
@@ -267,6 +236,57 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
 
         me.callParent(arguments);
 
+    },
+
+    onConcluirClick: function(btn){
+        var me = btn.up('window'),
+            notyType = 'success',
+            notyText = 'Solicitação concluida com sucesso!';
+
+        var param = {
+            idEmpresa: me.vpItem.idEmpresa,
+            idVendaPerdida: me.vpItem.idVendaPerdida,
+            comentarioConc: me.down('textarea[name=comentarioConc]').getValue()
+        };
+
+        me.setLoading({msg: '<b>Salvando os dados...</b>'});
+
+        Ext.Ajax.request({
+            url : BASEURL + '/api/vp/concluir',
+            method: 'POST',
+            params: param,
+            success: function (response) {
+                var result = Ext.decode(response.responseText);
+
+                if(!result.success){
+                    notyType = 'error';
+                    notyText = result.message;
+                    window.setLoading(false);
+                }
+
+                me.noty(notyType, notyText);
+
+                if(result.success){
+
+                    Ext.GlobalEvents.fireEvent('vpsolicitacaoconcluida', {
+                        idEmpresa: me.vpItem.idEmpresa,
+                        idVendaPerdida: me.vpItem.idVendaPerdida
+                    });
+                    
+                    me.close();
+                }
+            }
+        });
+    },
+
+    noty: function(notyType, notyText){
+        new Noty({
+            theme: 'relax',
+            layout: 'bottomRight',
+            type: notyType,
+            timeout: 3000,
+            text: notyText
+        }).show();
     }
 
 });

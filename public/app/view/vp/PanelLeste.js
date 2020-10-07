@@ -1,13 +1,49 @@
 Ext.define('App.view.vp.PanelLeste', {
     extend: 'Ext.panel.Panel',
-    xtype: 'PanelLeste',
-    id: 'PanelLeste',
+    xtype: 'panelleste',
+    itemId: 'panelleste',
     width: 300,
     title: 'Comentários',
     collapsible: true,
     layout: 'fit',
-    constructor: function() {
+    initComponent: function() {
         var me = this;
+
+        Ext.GlobalEvents.on('vpsolicitacaoconcluida', function(vpItem){
+            var gridLeste = me.down('#gridLeste'),
+                gridLesteStore = gridLeste.getStore();
+
+            gridLesteStore.getProxy().setExtraParams({
+                idEmpresa: vpItem.idEmpresa,
+                idVendaPerdida: vpItem.idVendaPerdida
+            });
+
+            gridLeste.getStore().load();
+        });
+
+        Ext.GlobalEvents.on('vpsolicitacaoaprovada', function(vpItem){
+            var gridLeste = me.down('#gridLeste'),
+                gridLesteStore = gridLeste.getStore();
+
+            gridLesteStore.getProxy().setExtraParams({
+                idEmpresa: vpItem.idEmpresa,
+                idVendaPerdida: vpItem.idVendaPerdida
+            });
+
+            gridLeste.getStore().load();
+        });
+
+        Ext.GlobalEvents.on('vpsolicitacaocancelada', function(vpItem){
+            var gridLeste = me.down('#gridLeste'),
+                gridLesteStore = gridLeste.getStore();
+
+            gridLesteStore.getProxy().setExtraParams({
+                idEmpresa: vpItem.idEmpresa,
+                idVendaPerdida: vpItem.idVendaPerdida
+            });
+
+            gridLeste.getStore().load();
+        });
 
         var myStore = Ext.create('Ext.data.Store', {
             model: Ext.create('Ext.data.Model', {
@@ -37,7 +73,7 @@ Ext.define('App.view.vp.PanelLeste', {
             items :[
                 {
                     xtype: 'grid',
-                    id: 'gridLeste',
+                    itemId: 'gridLeste',
                     store: myStore,
                     hideHeaders: true,
                     columns: [

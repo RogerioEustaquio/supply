@@ -85,15 +85,15 @@ class VpController extends AbstractRestfulController
     {
         $data = array();
 
-        $emp        = $this->params()->fromQuery('emp',null);
+        $idEmpresa  = $this->params()->fromQuery('idEmpresa',null);
         $dataInicio = $this->params()->fromQuery('dataInicio',null);
         $dataFim    = $this->params()->fromQuery('dataFim',null);
 
         $andSql = '';
 
-        if($emp  && $emp != 20){
+        if($idEmpresa  && $idEmpresa != 20){
 
-            $andSql = " and a.id_empresa = $emp";
+            $andSql = " and a.id_empresa = $idEmpresa";
         
         }
 
@@ -217,10 +217,10 @@ class VpController extends AbstractRestfulController
             $session = $this->getSession();
             $usuario = $session['info']['usuarioSistema'];
 
-            $emp            = $this->params()->fromQuery('emp',null);
+            $idEmpresa      = $this->params()->fromQuery('idEmpresa',null);
             $idVendaPerdida = $this->params()->fromQuery('idVendaPerdida',null);
 
-            if(empty($emp)){
+            if(empty($idEmpresa)){
                 
                 $this->setCallbackData();
                 $this->setMessage("Solicitação enviada com sucesso.");
@@ -231,9 +231,9 @@ class VpController extends AbstractRestfulController
             $em = $this->getEntityManager();
             $conn = $em->getConnection();
 
-            $sql = "call pkg_x2_vp.gerar_solicitacao( :emp, :idVendaPerdida)";
+            $sql = "call pkg_x2_vp.gerar_solicitacao( :idEmpresa, :idVendaPerdida)";
             $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':emp', $emp);
+            $stmt->bindParam(':idEmpresa', $idEmpresa);
             $stmt->bindParam(':idVendaPerdida', $idVendaPerdida);
             $stmt->execute();
 
@@ -252,13 +252,13 @@ class VpController extends AbstractRestfulController
                     where c.id_empresa = s.id_empresa
                     and c.id_venda_perdida = s.id_venda_perdida
                     and c.id_status = t.id_status
-                    and c.id_empresa = :emp
+                    and c.id_empresa = :idEmpresa
                     and c.id_venda_perdida = :idVendaPerdida
                     order by data1 desc
                     ";
 
             $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':emp', $emp);
+            $stmt->bindParam(':idEmpresa', $idEmpresa);
             $stmt->bindParam(':idVendaPerdida', $idVendaPerdida);
             $stmt->execute();
             $results = $stmt->fetchAll();
@@ -293,7 +293,7 @@ class VpController extends AbstractRestfulController
             $session = $this->getSession();
             $usuario = $session['info']['usuarioSistema'];
 
-            $emp            = $this->params()->fromQuery('emp',null);
+            $idEmpresa      = $this->params()->fromQuery('idEmpresa',null);
             $idVendaPerdida = $this->params()->fromQuery('idVendaPerdida',null);
             $idItem         = $this->params()->fromQuery('idItem',null);
             $idCategoria    = $this->params()->fromQuery('idCategoria',null);
@@ -301,14 +301,13 @@ class VpController extends AbstractRestfulController
             $em = $this->getEntityManager();
             $conn = $em->getConnection();
 
-            $sql = "select 'RA' emp, '$emp' id_empresa, '$idVendaPerdida' id_venda_perdida from dual
+            $sql = "select 'RA' emp, '$idEmpresa' id_empresa, '$idVendaPerdida' id_venda_perdida from dual
                     union
-                    select 'RJ' emp, '$emp' id_empresa, '$idVendaPerdida' id_venda_perdida from dual
+                    select 'RJ' emp, '$idEmpresa' id_empresa, '$idVendaPerdida' id_venda_perdida from dual
                     union
-                    select 'AP' emp, '$emp' id_empresa, '$idVendaPerdida' id_venda_perdida from dual";
+                    select 'AP' emp, '$idEmpresa' id_empresa, '$idVendaPerdida' id_venda_perdida from dual";
 
             $stmt = $conn->prepare($sql);
-            // $stmt->bindParam(':emp', $emp);
             // $stmt->bindParam(':idVendaPerdida', $idVendaPerdida);
             $stmt->execute();
             $results = $stmt->fetchAll();
@@ -334,7 +333,7 @@ class VpController extends AbstractRestfulController
         return $this->getCallbackModel();
     }
 
-    public function AprovarAction()
+    public function aprovarAction()
     {
         $data = array();
         
@@ -342,7 +341,7 @@ class VpController extends AbstractRestfulController
             $session = $this->getSession();
             $usuario = $session['info']['usuarioSistema'];
 
-            $emp            = $this->params()->fromPost('emp',null);
+            $idEmpresa      = $this->params()->fromPost('idEmpresa',null);
             $idVendaPerdida = $this->params()->fromPost('idVendaPerdida',null);
             $comentarioSo   = $this->params()->fromPost('comentarioSo',null);
             $comentarioAp   = $this->params()->fromPost('comentarioAp',null);
@@ -352,9 +351,9 @@ class VpController extends AbstractRestfulController
             $em   = $this->getEntityManager();
             $conn = $em->getConnection();
 
-            $sql  = "call pkg_x2_vp.aprovar_solicitacao( :emp, :idVendaPerdida, :usuario, :comentario)";
+            $sql  = "call pkg_x2_vp.aprovar_solicitacao( :idEmpresa, :idVendaPerdida, :usuario, :comentario)";
             $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':emp', $emp);
+            $stmt->bindParam(':idEmpresa', $idEmpresa);
             $stmt->bindParam(':idVendaPerdida', $idVendaPerdida);
             $stmt->bindParam(':usuario', $usuario);
             $stmt->bindParam(':comentario', $comentarioAp);
@@ -369,7 +368,7 @@ class VpController extends AbstractRestfulController
         return $this->getCallbackModel();
     }
 
-    public function CancelarAction()
+    public function cancelarAction()
     {
         $data = array();
         
@@ -377,7 +376,7 @@ class VpController extends AbstractRestfulController
             $session = $this->getSession();
             $usuario = $session['info']['usuarioSistema'];
 
-            $emp              = $this->params()->fromPost('emp',null);
+            $idEmpresa        = $this->params()->fromPost('idEmpresa',null);
             $idVendaPerdida   = $this->params()->fromPost('idVendaPerdida',null);
             $comentarioCanc   = $this->params()->fromPost('comentarioCanc',null);
 
@@ -386,43 +385,9 @@ class VpController extends AbstractRestfulController
             $em = $this->getEntityManager();
             $conn = $em->getConnection();
 
-            $sql  = "call pkg_x2_vp.cancelar_solicitacao( :emp, :idVendaPerdida, :usuario, :comentario)";
+            $sql  = "call pkg_x2_vp.cancelar_solicitacao( :idEmpresa, :idVendaPerdida, :usuario, :comentario)";
             $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':emp', $emp);
-            $stmt->bindParam(':idVendaPerdida', $idVendaPerdida);
-            $stmt->bindParam(':usuario', $usuario);
-            $stmt->bindParam(':comentario', $comentarioCanc);
-            $result = $stmt->execute();
-            $this->setCallbackData($data);
-            $this->setMessage("Solicitação enviada com sucesso.");
-            
-        } catch (\Exception $e) {
-            $this->setCallbackError($e->getMessage());
-        }
-        
-        return $this->getCallbackModel();
-    }
-
-    public function AtendimentoAction()
-    {
-        $data = array();
-        
-        try {
-            $session = $this->getSession();
-            $usuario = $session['info']['usuarioSistema'];
-
-            $emp            = $this->params()->fromPost('emp',null);
-            $idVendaPerdida = $this->params()->fromPost('idVendaPerdida',null);
-            $comentarioCanc = $this->params()->fromPost('comentarioCanc',null);
-
-            $data = array();
-
-            $em = $this->getEntityManager();
-            $conn = $em->getConnection();
-
-            $sql = "call pkg_x2_vp.aprovar_solicitacao( :emp, :idVendaPerdida, :usuario, :comentario)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':emp', $emp);
+            $stmt->bindParam(':idEmpresa', $idEmpresa);
             $stmt->bindParam(':idVendaPerdida', $idVendaPerdida);
             $stmt->bindParam(':usuario', $usuario);
             $stmt->bindParam(':comentario', $comentarioCanc);
@@ -437,7 +402,7 @@ class VpController extends AbstractRestfulController
         return $this->getCallbackModel();
     }
     
-    public function ConcluirAction()
+    public function concluirAction()
     {
         $data = array();
         
@@ -445,7 +410,7 @@ class VpController extends AbstractRestfulController
             $session = $this->getSession();
             $usuario = $session['info']['usuarioSistema'];
 
-            $emp            = $this->params()->fromPost('emp',null);
+            $idEmpresa      = $this->params()->fromPost('idEmpresa',null);
             $idVendaPerdida = $this->params()->fromPost('idVendaPerdida',null);
             $comentarioConc = $this->params()->fromPost('comentarioConc',null);
 
@@ -454,9 +419,9 @@ class VpController extends AbstractRestfulController
             $em = $this->getEntityManager();
             $conn = $em->getConnection();
 
-            $sql = "call pkg_x2_vp.concluir_solicitacao( :emp, :idVendaPerdida, :usuario, :comentario)";
+            $sql = "call pkg_x2_vp.concluir_solicitacao( :idEmpresa, :idVendaPerdida, :usuario, :comentario)";
             $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':emp', $emp);
+            $stmt->bindParam(':idEmpresa', $idEmpresa);
             $stmt->bindParam(':idVendaPerdida', $idVendaPerdida);
             $stmt->bindParam(':usuario', $usuario);
             $stmt->bindParam(':comentario', $comentarioConc);

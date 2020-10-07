@@ -1,13 +1,46 @@
 Ext.define('App.view.vp.ItensGridPanel', {
     extend: 'Ext.grid.Panel',
-    xtype: 'ItensGridPanel',
-    id: 'ItensGridPanel',
+    xtype: 'itensgridpanel',
+    // id: 'ItensGridPanel',
     margin: '1 1 1 1',
     requeri:[
         'Ext.ux.util.Format'
     ],
-    constructor: function() {
+    initComponent: function() {
         var me = this;
+
+        Ext.GlobalEvents.on('vpsolicitacaoconcluida', function(vpItem){
+            me.getStore().each(function(record, idx) {
+                if(record.get('idEmpresa') === vpItem.idEmpresa && 
+                    record.get('idVendaPerdida') === vpItem.idVendaPerdida){
+                   
+                    record.set('status', 'Concluído');
+                    record.commit();
+                }
+            });
+        });
+
+        Ext.GlobalEvents.on('vpsolicitacaocancelada', function(vpItem){
+            me.getStore().each(function(record, idx) {
+                if(record.get('idEmpresa') === vpItem.idEmpresa && 
+                    record.get('idVendaPerdida') === vpItem.idVendaPerdida){
+                   
+                    record.set('status', 'Cancelado');
+                    record.commit();
+                }
+            });
+        });
+
+        Ext.GlobalEvents.on('vpsolicitacaoaprovada', function(vpItem){
+            me.getStore().each(function(record, idx) {
+                if(record.get('idEmpresa') === vpItem.idEmpresa && 
+                    record.get('idVendaPerdida') === vpItem.idVendaPerdida){
+                   
+                    record.set('status', 'Aprovado');
+                    record.commit();
+                }
+            });
+        });
 
         var myStore = Ext.create('Ext.data.Store', {
             model: Ext.create('Ext.data.Model', {
@@ -169,15 +202,13 @@ Ext.define('App.view.vp.ItensGridPanel', {
                     element: 'el', //bind to the underlying el property on the panel
                     fn: function(record){
 
-                        var girdLeste = me.up('container').down('#PanelLeste').down('grid');
-
+                        var girdLeste = me.up('container').down('#panelleste').down('grid');
                         var elements = record.record.data;
-
                         var objTool = me.up('container').down('toolbar');
 
                         if (elements.status == 'Pendente'){
 
-                            objTool.down('#btnComentario').setDisabled(false);
+                            objTool.down('#btnAprovar').setDisabled(false);
                             objTool.down('#btnConcluir').setDisabled(true);
                             objTool.down('#btnCancelar').setDisabled(false);
 
@@ -185,7 +216,7 @@ Ext.define('App.view.vp.ItensGridPanel', {
 
                         if(elements.status == 'Aprovado'){
                             
-                            objTool.down('#btnComentario').setDisabled(true);
+                            objTool.down('#btnAprovar').setDisabled(true);
                             objTool.down('#btnConcluir').setDisabled(false);
                             objTool.down('#btnCancelar').setDisabled(false);
 
@@ -193,25 +224,18 @@ Ext.define('App.view.vp.ItensGridPanel', {
 
                         if(elements.status == 'Cancelado' || elements.status == 'Concluído'){
                             
-                            objTool.down('#btnComentario').setDisabled(true);
+                            objTool.down('#btnAprovar').setDisabled(true);
                             objTool.down('#btnConcluir').setDisabled(true);
                             objTool.down('#btnCancelar').setDisabled(true);
 
                         }
                         
-                        
-                        
-
                         var params = {
-                            emp : elements.idEmpresa,
+                            idEmpresa: elements.idEmpresa,
                             idVendaPerdida : elements.idVendaPerdida
                         };
-                        // console.log(v.record.data);
-
-                        var girdLeste = me.up('container').down('#PanelLeste').down('grid');
 
                         girdLeste.getStore().getProxy().setExtraParams(params);
-
                         girdLeste.getStore().load();
 
                     }

@@ -17,15 +17,15 @@ Ext.define('App.view.vp.Main', {
             },
             items: [
                 {
-                    xtype: 'VpToolbar',
+                    xtype: 'vptoolbar',
                     region: 'north'
                 },
                 {
-                    xtype: 'ItensGridPanel',
+                    xtype: 'itensgridpanel',
                     region: 'center'
                 },
                 {
-                    xtype: 'PanelLeste',
+                    xtype: 'panelleste',
                     region: 'east'
                 }
             ]

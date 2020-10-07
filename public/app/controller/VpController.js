@@ -7,7 +7,6 @@ Ext.define('App.controller.VpController', {
         'App.view.vp.ItensGridPanel',
         'App.view.vp.PanelLeste',
         'App.view.vp.AprovacaoVpWindow',
-        'App.view.vp.AtendimentoVpWindow',
         'App.view.vp.ConclusaoVpWindow',
         'App.view.vp.CancelamentoVpWindow'
     ],

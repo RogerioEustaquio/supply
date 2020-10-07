@@ -1,7 +1,7 @@
 Ext.define('App.view.vp.CancelamentoVpWindow', {
     extend: 'Ext.window.Window',
-    xtype: 'CancelamentoVpWindow',
-    id: 'CancelamentoVpWindow',
+    xtype: 'cancelamentovpwindow',
+    itemId: 'cancelamentovpwindow',
     height: Ext.getBody().getHeight() * 0.7,
     width: Ext.getBody().getWidth() * 0.7,
     title: 'Cancelamento de Comentário de Venda Perdida',
@@ -9,66 +9,17 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
 
     ],
     layout: 'fit',
-    constructor: function() {
+    vpItem: null,
+
+    initComponent: function() {
         var me = this;
 
-        var btnCanc = Ext.create('Ext.form.field.TextArea', {
-
-            fieldLabel: '<b>Comentário de Cancelamento</b>',
-            maxRows: 4,
-            labelAlign: 'top',
-            name: 'comentarioCanc',
-            maxLength: 100,
-            anchor: '98%',
-            margin: '1 1 1 1'
-        });
-
-        var btnCancelar = Ext.create('Ext.button.Button',{
-            
-            text: 'Confirmar',
-            tooltip: 'Confirmar',
-            margin: '1 6 1 1',
-            handler: function(form) {
-
-                var urlAction = '/api/vp/Cancelar';
-
-                var dataVp = me.down('grid').getStore().getData().items[0].data;
-
-                var param = {
-                    emp: dataVp.idEmpresa,
-                    idVendaPerdida: dataVp.idVendaPerdida,
-                    comentarioCanc: btnCanc.getValue()
-                };
-
-                Ext.Ajax.request({
-                    url : BASEURL + urlAction,
-                    method: 'POST',
-                    params: param,
-                    success: function (response) {
-
-                        var result = Ext.decode(response.responseText);
-                        if(result.success){
-
-                            var gridLeste = Ext.getCmp('gridLeste');
-
-                            gridLeste.getStore().getProxy().setExtraParams(param);
-                            gridLeste.getStore().load();
-
-                            // Ext.Msg.alert('info', 'Cancelamento de Comentário Registrado!');
-                            me.close();
-
-                            var gridItens = Ext.getCmp('ItensGridPanel');
-                            gridItens.getStore().reload();
-
-                        }else{
-                            Ext.Msg.alert('info', result.message);
-                        }
-
-                    }
-                });
-
-            }
-        });
+        var params = {
+            idEmpresa: me.vpItem.idEmpresa,
+            idVendaPerdida: me.vpItem.idVendaPerdida,
+            idItem: me.vpItem.idItem,
+            idCategoria: me.vpItem.idCategoria
+        };
 
         var myStore = Ext.create('Ext.data.Store', {
             model: Ext.create('Ext.data.Model', {
@@ -87,12 +38,13 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                 type: 'ajax',
                 url : BASEURL + '/api/vp/listaritenscategorias',
                 timeout: 240000,
+                params: params,
                 reader: {
                     type: 'json',
                     root: 'data'
                 }
             },
-            autoLoad : false
+            autoLoad : true
         });
 
         Ext.applyIf(me, {
@@ -127,7 +79,7 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                                             items: [
                                                 {
                                                     xtype: 'displayfield',
-                                                    id: 'winDatacan'
+                                                    value: me.vpItem.vpDataLancamento
                                                 }
                                             ]
                                         },
@@ -143,7 +95,7 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                                             items: [
                                                 {
                                                     xtype: 'displayfield',
-                                                    id: 'winVendedorcan'
+                                                    value: me.vpItem.vpFuncionarioVenda
                                                 }
                                             ]
                                         },
@@ -160,7 +112,7 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                                             items: [
                                                 {
                                                     xtype: 'displayfield',
-                                                    id: 'winClientecan'
+                                                    value: me.vpItem.idCliente + ' ' + me.vpItem.nomeCliente
                                                 }
                                             ]
                                         }
@@ -235,9 +187,19 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                                     labelAlign: 'top',
                                     id: 'comentarioSocan',
                                     anchor: '98%',
-                                    margin: '20 1 1 1'
+                                    margin: '20 1 1 1',
+                                    value: me.vpItem.vpComentario
                                 },
-                                btnCanc
+                                {
+                                    xtype: 'textarea',
+                                    fieldLabel: '<b>Comentário de Cancelamento</b>',
+                                    maxRows: 4,
+                                    labelAlign: 'top',
+                                    name: 'comentarioCanc',
+                                    maxLength: 100,
+                                    anchor: '98%',
+                                    margin: '1 1 1 1'
+                                }
                             ]
                         },
                         {
@@ -247,7 +209,13 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                             border: false,
                             items: [
                                 '->',
-                                btnCancelar
+                                {
+                                    xtype: 'button',
+                                    text: 'Confirmar',
+                                    tooltip: 'Confirmar',
+                                    margin: '1 6 1 1',
+                                    handler: me.onConfirmarClick
+                                }
                             ]
                         }
                     ]
@@ -258,6 +226,58 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
 
         me.callParent(arguments);
 
+    },
+
+    onConfirmarClick: function(btn){
+        var me = btn.up('window'),
+            notyType = 'success',
+            notyText = 'Solicitação Confirmada com sucesso!';
+
+        var param = {
+            idEmpresa: me.vpItem.idEmpresa,
+            idVendaPerdida: me.vpItem.idVendaPerdida,
+            comentarioCanc: me.down('textarea[name=comentarioCanc]').getValue()
+        };
+
+        me.setLoading({msg: '<b>Salvando os dados...</b>'});
+
+        Ext.Ajax.request({
+            url : BASEURL + '/api/vp/cancelar',
+            method: 'POST',
+            params: param,
+            success: function (response) {
+                var result = Ext.decode(response.responseText);
+
+                if(!result.success){
+                    notyType = 'error';
+                    notyText = result.message;
+                    window.setLoading(false);
+                }
+
+                me.noty(notyType, notyText);
+
+                if(result.success){
+
+                    Ext.GlobalEvents.fireEvent('vpsolicitacaocancelada', {
+                        idEmpresa: me.vpItem.idEmpresa,
+                        idVendaPerdida: me.vpItem.idVendaPerdida
+                    });
+                    
+                    me.close();
+                }
+            }
+        });
+
+    },
+
+    noty: function(notyType, notyText){
+        new Noty({
+            theme: 'relax',
+            layout: 'bottomRight',
+            type: notyType,
+            timeout: 3000,
+            text: notyText
+        }).show();
     }
 
 });
