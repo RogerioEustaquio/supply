@@ -47,8 +47,8 @@ Ext.application({
 
                 me.acessos = arrayAcesso;
 
-                // var appController = App.app.getController('ApplicationController');
-                // appController.redirectTo('home')
+                var appController = App.app.getController('ApplicationController');
+                appController.redirectTo('home')
             }
         });
 
