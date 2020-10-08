@@ -99,13 +99,13 @@ Ext.define('App.view.vp.ItensGridPanel', {
                 {
                     text: 'Código',
                     dataIndex: 'codItem',
-                    width: 100
+                    width: 124
                 },
                 {
                     text: 'Descrição',
                     dataIndex: 'descItem',
                     flex: 1,
-                    minWidth: 100
+                    minWidth: 140
                 },
                 {
                     text: 'Marca',
@@ -120,7 +120,7 @@ Ext.define('App.view.vp.ItensGridPanel', {
                 {
                     text: 'Tipo',
                     dataIndex: 'tipo',
-                    width: 80
+                    width: 100
                 },
                 {
                     text: 'Cod. Cli.',
@@ -193,54 +193,50 @@ Ext.define('App.view.vp.ItensGridPanel', {
                 }
             ],
             listeners: {
-                click: {
-                    element: 'el', //bind to the underlying el property on the panel
-                    fn: function(record){
+                select: function(grid,selected){
 
-                        var girdLeste = me.up('container').down('#panelleste').down('grid');
-                        var elements = record.record.data;
-                        var objTool = me.up('container').down('toolbar');
+                    var girdLeste = me.up('container').down('#panelleste').down('grid');
+                    var elements = selected.data;
+                    var objTool = me.up('container').down('toolbar');
 
-                        var objAprovar  = objTool.down('#btnAprovar');
-                        var objConcluir = objTool.down('#btnConcluir');
-                        var objCancelar = objTool.down('#btnCancelar');
+                    var objAprovar  = objTool.down('#btnAprovar');
+                    var objConcluir = objTool.down('#btnConcluir');
+                    var objCancelar = objTool.down('#btnCancelar');
 
-                        if (elements.status == 'Pendente'){
-                            if(objAprovar)
-                                objAprovar.setDisabled(false);
-                            if(objConcluir)
-                                objConcluir.setDisabled(true);
-                            if(objCancelar)
-                                objCancelar.setDisabled(false);
-                        }
-
-                        if(elements.status == 'Aprovado'){
-                            if(objAprovar)
-                                objAprovar.setDisabled(true);
-                            if(objConcluir)
-                                objConcluir.setDisabled(false);
-                            if(objCancelar)
-                                objCancelar.setDisabled(false);
-                        }
-
-                        if(elements.status == 'Cancelado' || elements.status == 'Concluído'){
-                            if(objTool.down('#btnAprovar'))
-                                objTool.down('#btnAprovar').setDisabled(true);
-                            if(objConcluir)
-                                objConcluir.setDisabled(true);
-                            if(objCancelar)
-                                objCancelar.setDisabled(true);
-                        }
-                        
-                        var params = {
-                            idEmpresa: elements.idEmpresa,
-                            idVendaPerdida : elements.idVendaPerdida
-                        };
-
-                        girdLeste.getStore().getProxy().setExtraParams(params);
-                        girdLeste.getStore().load();
-
+                    if (elements.status == 'Pendente'){
+                        if(objAprovar)
+                            objAprovar.setDisabled(false);
+                        if(objConcluir)
+                            objConcluir.setDisabled(true);
+                        if(objCancelar)
+                            objCancelar.setDisabled(false);
                     }
+
+                    if(elements.status == 'Aprovado'){
+                        if(objAprovar)
+                            objAprovar.setDisabled(true);
+                        if(objConcluir)
+                            objConcluir.setDisabled(false);
+                        if(objCancelar)
+                            objCancelar.setDisabled(false);
+                    }
+
+                    if(elements.status == 'Cancelado' || elements.status == 'Concluído'){
+                        if(objTool.down('#btnAprovar'))
+                            objTool.down('#btnAprovar').setDisabled(true);
+                        if(objConcluir)
+                            objConcluir.setDisabled(true);
+                        if(objCancelar)
+                            objCancelar.setDisabled(true);
+                    }
+                    
+                    var params = {
+                        idEmpresa: elements.idEmpresa,
+                        idVendaPerdida : elements.idVendaPerdida
+                    };
+
+                    girdLeste.getStore().getProxy().setExtraParams(params);
+                    girdLeste.getStore().load();
                 }
             }
         
