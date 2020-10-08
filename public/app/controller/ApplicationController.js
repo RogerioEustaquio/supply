@@ -10,7 +10,7 @@ Ext.define('App.controller.ApplicationController', {
     },
 
     routes: {
-        'home': { action: 'mainAction' },
+        'home': { action: 'homeAction' },
     },
     
     getViewport: function(){
@@ -20,8 +20,7 @@ Ext.define('App.controller.ApplicationController', {
     init: function() {
         var me = this;
 
-        // Se não tiver logado
-        // me.mainAction();
+        me.mainAction();
     },
     
     mainAction: function(){
@@ -33,19 +32,36 @@ Ext.define('App.controller.ApplicationController', {
                 itemId: 'applicationtabs',
                 region: 'center',
                 xtype: 'tabpanel',
-                layout: 'fit',
-                items:[
-                    {
-                        xtype: 'vpmain'
-                    }
-                ]
+                layout: 'fit'
             });
         }
     },
 
     homeAction: function(){
+        var me = this;
+        me.addMasterTab('vpmain');
+    },
+
+    addMasterTab: function(xtype){
         var me = this,
-        viewport = me.getViewport();
+            viewport = me.getViewport(),
+            viewportTabs = viewport.down('#applicationtabs'),
+            tab = viewportTabs.down(xtype);
+
+        if(!tab){
+            tab = viewportTabs.add({
+                closable: false,
+                xtype: xtype,
+                listeners: {
+                    destroy: function(){
+                        me.redirectTo('home');
+                    }
+                }
+            });
+        };
+        
+        viewportTabs.setActiveItem(tab);
     }
+    //---------------------------
     
 });

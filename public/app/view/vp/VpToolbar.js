@@ -79,6 +79,52 @@ Ext.define('App.view.vp.VpToolbar', {
             }
         });
 
+        var array = [
+                        {
+                            id_funcionario: USUARIO.id, nome: USUARIO.usuarioSistema, acessos: ['btnAprovar','btnConcluir','btnReprovar']
+                        }
+                    ];
+        // console.log(array);
+        var btnAprovar = null;
+        var btnConcluir = null;
+        var btnReprovar = null;
+                    console.log(App.app.acessos);
+
+        if(App.app.acessos.indexOf('btnAprovar') !== -1){
+            btnAprovar = Ext.create('Ext.button.Button',{
+
+                iconCls: 'fa fa-check',
+                itemId: 'btnAprovar',
+                tooltip: 'Aprovar',
+                margin: '2 6 2 2',
+                handler: me.onBtnAprovarClick
+            });
+        }
+
+        if(App.app.acessos.indexOf('btnConcluir') !== -1){
+            btnConcluir = Ext.create('Ext.button.Button',{
+        
+                iconCls: 'fa fa-check-double',
+                itemId: 'btnConcluir',
+                disabled: true,
+                tooltip: 'Concluir',
+                margin: '1 6 1 1',
+                handler: me.onBtnConcluirClick
+            });
+        }
+
+        if(App.app.acessos.indexOf('btnReprovar') !== -1){
+            btnReprovar = Ext.create('Ext.button.Button',{
+        
+                iconCls: 'fa fa-times',
+                itemId: 'btnCancelar',
+                disabled: true,
+                tooltip: 'Cancelar',
+                margin: '1 6 1 1',
+                handler: me.onBtnCancelarClick
+            });
+        }
+
         Ext.applyIf(me, {
 
             items: [
@@ -94,32 +140,9 @@ Ext.define('App.view.vp.VpToolbar', {
                 },
                 btnClean,
                 '->',
-                {
-                    xtype: 'button',
-                    iconCls: 'fa fa-check',
-                    itemId: 'btnAprovar',
-                    tooltip: 'Aprovar',
-                    margin: '2 6 2 2',
-                    handler: me.onBtnAprovarClick
-                },
-                {
-                    xtype: 'button',
-                    iconCls: 'fa fa-check-double',
-                    itemId: 'btnConcluir',
-                    disabled: true,
-                    tooltip: 'Concluir',
-                    margin: '1 6 1 1',
-                    handler: me.onBtnConcluirClick
-                },
-                {
-                    xtype: 'button',
-                    iconCls: 'fa fa-times',
-                    itemId: 'btnCancelar',
-                    disabled: true,
-                    tooltip: 'Cancelar',
-                    margin: '1 6 1 1',
-                    handler: me.onBtnCancelarClick
-                }
+                btnAprovar,
+                btnConcluir,
+                btnReprovar
             ]
 
         });

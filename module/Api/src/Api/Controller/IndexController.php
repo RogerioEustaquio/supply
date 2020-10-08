@@ -181,5 +181,50 @@ class IndexController extends AbstractRestfulController
             "success" => $success
         ));
     }
+
+    public function listarAcessosAction()
+    {
+        $data = array();
+        
+        try {
+
+            $session = $this->getSession();
+            $usuario = $session['info']['usuarioSistema'];
+            $cpf     = $this->params()->fromPost('cpf',null);
+
+            $em = $this->getEntityManager();
+
+            $sql = "select 'btnAprovar' as acesso from dual 
+                    union all
+                    select 'btnConcluir' as acesso from dual
+                    union all
+                    select 'btnReprovar' as acesso from dual
+                ";
+
+            $conn = $em->getConnection();
+            $stmt = $conn->prepare($sql);
+            
+            $stmt->execute();
+            $results = $stmt->fetchAll();
+
+            $hydrator = new ObjectProperty;
+            $stdClass = new StdClass;
+            $resultSet = new HydratingResultSet($hydrator, $stdClass);
+            $resultSet->initialize($results);
+
+            $data = array();
+            foreach ($resultSet as $row) {
+
+                $data[] = $hydrator->extract($row);
+            }
+
+            $this->setCallbackData($data);
+            
+        } catch (\Exception $e) {
+            $this->setCallbackError($e->getMessage());
+        }
+        
+        return $this->getCallbackModel();
+    }
     
 }

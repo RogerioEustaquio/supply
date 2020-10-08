@@ -21,15 +21,36 @@ Ext.application({
     
     mainView: 'App.view.Viewport',
 
-    defaultToken: 'home',
-    
+    // defaultToken: 'home',
+    acessos: [],
     launch: function() {
+        var me = this;
 
         if(!USUARIO && USUARIO != '""')
         window.location.href = BASEURL + '/login';
 
         // Recupera os dados do usuário
         USUARIO = Ext.decode(USUARIO);
+
+        Ext.Ajax.request({
+            url : BASEURL + '/api/index/listarAcessos',
+            method: 'POST',
+            async : false,
+            params: {cpf: USUARIO.id},
+            success: function (response) {
+                var result = Ext.decode(response.responseText);
+
+                var arrayAcesso = new Array();
+                result.data.forEach(function(record){
+                    arrayAcesso.push(record.acesso);
+                });
+
+                me.acessos = arrayAcesso;
+
+                // var appController = App.app.getController('ApplicationController');
+                // appController.redirectTo('home')
+            }
+        });
 
         // console.log(USUARIO);
     }

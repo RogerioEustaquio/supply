@@ -201,28 +201,35 @@ Ext.define('App.view.vp.ItensGridPanel', {
                         var elements = record.record.data;
                         var objTool = me.up('container').down('toolbar');
 
+                        var objAprovar  = objTool.down('#btnAprovar');
+                        var objConcluir = objTool.down('#btnConcluir');
+                        var objCancelar = objTool.down('#btnCancelar');
+
                         if (elements.status == 'Pendente'){
-
-                            objTool.down('#btnAprovar').setDisabled(false);
-                            objTool.down('#btnConcluir').setDisabled(true);
-                            objTool.down('#btnCancelar').setDisabled(false);
-
+                            if(objAprovar)
+                                objAprovar.setDisabled(false);
+                            if(objConcluir)
+                                objConcluir.setDisabled(true);
+                            if(objCancelar)
+                                objCancelar.setDisabled(false);
                         }
 
                         if(elements.status == 'Aprovado'){
-                            
-                            objTool.down('#btnAprovar').setDisabled(true);
-                            objTool.down('#btnConcluir').setDisabled(false);
-                            objTool.down('#btnCancelar').setDisabled(false);
-
+                            if(objAprovar)
+                                objAprovar.setDisabled(true);
+                            if(objConcluir)
+                                objConcluir.setDisabled(false);
+                            if(objCancelar)
+                                objCancelar.setDisabled(false);
                         }
 
                         if(elements.status == 'Cancelado' || elements.status == 'Concluído'){
-                            
-                            objTool.down('#btnAprovar').setDisabled(true);
-                            objTool.down('#btnConcluir').setDisabled(true);
-                            objTool.down('#btnCancelar').setDisabled(true);
-
+                            if(objTool.down('#btnAprovar'))
+                                objTool.down('#btnAprovar').setDisabled(true);
+                            if(objConcluir)
+                                objConcluir.setDisabled(true);
+                            if(objCancelar)
+                                objCancelar.setDisabled(true);
                         }
                         
                         var params = {
