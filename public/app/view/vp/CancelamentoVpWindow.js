@@ -2,8 +2,8 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
     extend: 'Ext.window.Window',
     xtype: 'cancelamentovpwindow',
     itemId: 'cancelamentovpwindow',
-    height: Ext.getBody().getHeight() * 0.7,
-    width: Ext.getBody().getWidth() * 0.7,
+    height: Ext.getBody().getHeight() * 0.8,
+    width: Ext.getBody().getWidth() * 0.9,
     title: 'Cancelamento de Comentário de Venda Perdida',
     requires:[
 
@@ -24,21 +24,25 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
         var myStore = Ext.create('Ext.data.Store', {
             model: Ext.create('Ext.data.Model', {
                     fields:[{name:'idEmpresa',mapping:'idEmpresa'},
-                            {name:'idCliente',mapping:'idCliente'},
-                            {name:'nomeCliente',mapping:'nomeCliente'},
+                            {name:'emp',mapping:'emp'},
                             {name:'codItem',mapping:'codItem'},
-                            {name:'descItem',mapping:'descItem'},
+                            {name:'descricao',mapping:'descricao'},
                             {name:'marca',mapping:'marca'},
-                            {name:'curva',mapping:'curva'},
-                            {name:'vpDataLancamento', type: 'date', dateFormat: 'd/m/Y H:i:s' },
-                            {name:'vpQtde',mapping:'vpQtde'}
+                            {name:'estoque',mapping:'estoque'},
+                            {name:'qtdePendente',mapping:'qtdePendente'},
+                            {name:'qtdeTotal_12m',mapping:'qtdeTotal_12m'},
+                            {name:'qtdeTotal_6m',mapping:'qtdeTotal_6m'},
+                            {name:'qtdeTotal_3m',mapping:'qtdeTotal_3m'},
+                            {name:'med_12m',mapping:'med_12m', type: 'float'},
+                            {name:'med_6m',mapping:'med_6m', type: 'float'},
+                            {name:'med_3m',mapping:'med_3m', type: 'float'}
                             ]
             }),
             proxy: {
                 type: 'ajax',
                 url : BASEURL + '/api/vp/listaritenscategorias',
                 timeout: 240000,
-                params: params,
+                extraParams: params,
                 reader: {
                     type: 'json',
                     root: 'data'
@@ -71,7 +75,7 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                                             xtype: 'fieldset',
                                             title: '<b>Data</b>',
                                             defaultType: 'textfield',
-                                            width: '14%',
+                                            width: '12%',
                                             margin: '0 6 6 0',
                                             defaults: {
                                                 anchor: '100%'
@@ -85,9 +89,41 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                                         },
                                         {
                                             xtype: 'fieldset',
+                                            title: '<b>Quantidade Vp</b>',
+                                            defaultType: 'textfield',
+                                            width: '10%',
+                                            margin: '0 6 6 0',
+                                            defaults: {
+                                                anchor: '100%'
+                                            },
+                                            items: [
+                                                {
+                                                    xtype: 'displayfield',
+                                                    value: me.vpItem.vpQtde
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            xtype: 'fieldset',
+                                            title: '<b>Estoque Vp</b>',
+                                            defaultType: 'textfield',
+                                            width: '8%',
+                                            margin: '0 6 6 0',
+                                            defaults: {
+                                                anchor: '100%'
+                                            },
+                                            items: [
+                                                {
+                                                    xtype: 'displayfield',
+                                                    value: me.vpItem.vpEstoque
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            xtype: 'fieldset',
                                             title: '<b>Vendedor</b>',
                                             defaultType: 'textfield',
-                                            width: '32%',
+                                            width: '28%',
                                             margin: '0 6 6 0',
                                             defaults: {
                                                 anchor: '100%'
@@ -128,27 +164,14 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                                             width: 52
                                         },
                                         {
-                                            text: 'Cod. Cli.',
-                                            dataIndex: 'idCliente',
-                                            width: 100,
-                                            hidden: true
-                                        },
-                                        {
-                                            text: 'Cliente',
-                                            dataIndex: 'nomeCliente',
-                                            flex: 1,
-                                            minWidth: 100,
-                                            hidden: true
-                                        },
-                                        {
                                             text: 'Código',
                                             dataIndex: 'codItem',
-                                            width: 100,
+                                            width: 120,
                                             hidden: false
                                         },
                                         {
                                             text: 'Descrição',
-                                            dataIndex: 'descItem',
+                                            dataIndex: 'descricao',
                                             flex: 1,
                                             minWidth: 100
                                         },
@@ -158,25 +181,60 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                                             width: 120
                                         },
                                         {
-                                            text: 'Curva',
-                                            dataIndex: 'curva',
-                                            width: 60
-                                        },
-                                        {
-                                            text: 'Quantidade',
-                                            dataIndex: 'vpQtde',
-                                            width: 100
-                                        },
-                                        {
                                             text: 'Estoque',
-                                            dataIndex: 'vpEstoque',
+                                            dataIndex: 'estoque',
                                             width: 80
                                         },
                                         {
-                                            text: 'Data',
-                                            dataIndex: 'vpDataLancamento',
-                                            width: 100,
-                                            hidden: true
+                                            text: 'Qtde Pendente',
+                                            dataIndex: 'qtdePendente',
+                                            width: 114,
+                                            hidden: false
+                                        },
+                                        {
+                                            text: 'Qtde 12M',
+                                            dataIndex: 'qtdeTotal_12m',
+                                            width: 80,
+                                            hidden: false
+                                        },
+                                        {
+                                            text: 'Qtde 6M',
+                                            dataIndex: 'qtdeTotal_6m',
+                                            width: 80,
+                                            hidden: false
+                                        },
+                                        {
+                                            text: 'Qtde 3M',
+                                            dataIndex: 'qtdeTotal_3m',
+                                            width: 80,
+                                            hidden: false
+                                        },
+                                        {
+                                            text: 'Méd. 12M',
+                                            dataIndex: 'med_12m',
+                                            width: 80,
+                                            hidden: false,
+                                            renderer: function (v) {
+                                                return me.Value(v);
+                                            }
+                                        },
+                                        {
+                                            text: 'Méd. 6M',
+                                            dataIndex: 'med_6m',
+                                            width: 80,
+                                            hidden: false,
+                                            renderer: function (v) {
+                                                return me.Value(v);
+                                            }
+                                        },
+                                        {
+                                            text: 'Méd. 3M',
+                                            dataIndex: 'med_3m',
+                                            width: 80,
+                                            hidden: false,
+                                            renderer: function (v) {
+                                                return me.Value(v);
+                                            }
                                         }
                                     ]
                                 },
@@ -278,6 +336,16 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
             timeout: 3000,
             text: notyText
         }).show();
+    },
+
+    Value: function(v) {
+        var val = '';
+        if (v) {
+            val = Ext.util.Format.currency(v, ' ', 4, false);
+        } else {
+            val = 0;
+        }
+        return val;
     }
 
 });

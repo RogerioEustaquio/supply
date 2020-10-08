@@ -90,11 +90,6 @@ Ext.define('App.view.vp.ItensGridPanel', {
                     align: 'center',
                     dataIndex: 'vpDataLancamento',
                     // renderer: Ext.util.Format.dateRenderer('d/m/Y H:i')
-                    // renderer: function(v){
-
-                    //     var valor = Ext.util.Format.date(v,'m/d/Y H:i');
-                    //     return valor;
-                    // }
                 },
                 {
                     text: 'Emp',

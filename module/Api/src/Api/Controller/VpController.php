@@ -142,10 +142,8 @@ class VpController extends AbstractRestfulController
                         pkg_x2_help_estoque.get_estoque_ruptura_dias(A.ID_EMPRESA, A.ID_ITEM, A.ID_CATEGORIA, A.DATA_CREATED, 180) AS VP_DIAS_RUPTURA_180D,
                         pkg_x2_help_estoque.get_estoque_ruptura_eventos(A.ID_EMPRESA, A.ID_ITEM, A.ID_CATEGORIA, A.DATA_CREATED, 30) AS VP_EVENTOS_RUPTURA_30D,
                         pkg_x2_help_estoque.get_estoque_ruptura_dias(A.ID_EMPRESA, A.ID_ITEM, A.ID_CATEGORIA, A.DATA_CREATED, 30) AS VP_DIAS_RUPTURA_30D,
-                
                         nvl(sl.id_status,1) as id_status,
                         nvl(st.descricao,'Pendente') as status
-                        
                 FROM MS.VE_VENDA_PERDIDA  A,
                         MS.PESSOA            P,
                         MS.TB_ITEM           B,
@@ -301,19 +299,56 @@ class VpController extends AbstractRestfulController
             $em = $this->getEntityManager();
             $conn = $em->getConnection();
 
-            $sql = "select 'RA' emp, '$idEmpresa' id_empresa, '$idVendaPerdida' id_venda_perdida from dual
-                    union
-                    select 'RJ' emp, '$idEmpresa' id_empresa, '$idVendaPerdida' id_venda_perdida from dual
-                    union
-                    select 'AP' emp, '$idEmpresa' id_empresa, '$idVendaPerdida' id_venda_perdida from dual";
+            $sql = "select a.idx, a.id_empresa, a.id_item, a.id_categoria,
+                        a.emp, a.cod_item, a.descricao, a.marca, a.estoque,
+                        b.qtde_pendente,
+                        b.qtde_total_12m,
+                        b.qtde_total_6m,
+                        b.qtde_total_3m,
+                        round(b.qtde_total_12m/12,4) as med_12m,
+                        round(b.qtde_total_6m/6,4) as med_6m,
+                        round(b.qtde_total_3m/3,4) as med_3
+                    from (select decode(es.id_categoria,20,1,0) as idx, es.id_empresa, es.id_item, es.id_categoria,
+                            e.apelido as emp,
+                            i.cod_item||c.descricao as cod_item,
+                            i.descricao,
+                            m.descricao as marca,
+                            es.estoque
+                            from ms.tb_estoque es,
+                            ms.tb_item_categoria ic,
+                            ms.tb_item i,
+                            ms.tb_categoria c,
+                            ms.tb_marca m,
+                            ms.empresa e
+                            where es.id_item = ic.id_item
+                            and es.id_categoria = ic.id_categoria
+                            and es.id_item = i.id_item
+                            and es.id_categoria = c.id_categoria
+                            and ic.id_marca = m.id_marca
+                            and es.id_empresa = e.id_empresa
+                            and e.id_empresa = :idEmpresa
+                            and i.id_item = :idItem
+                            and c.id_categoria = :idCategoria ) a,
+                            pan_rel_vendas_24_meses b
+                    where a.emp = b.filial(+)
+                    and a.cod_item = b.cod_item(+)
+                    order by a.idx desc, a.estoque desc";
 
             $stmt = $conn->prepare($sql);
-            // $stmt->bindParam(':idVendaPerdida', $idVendaPerdida);
+            $stmt->bindParam(':idEmpresa', $idEmpresa);
+            $stmt->bindParam(':idItem', $idItem);
+            $stmt->bindParam(':idCategoria', $idCategoria);
             $stmt->execute();
             $results = $stmt->fetchAll();
 
             $hydrator = new ObjectProperty;
-            $hydrator->addStrategy('emp', new ValueStrategy);
+            $hydrator->addStrategy('qtde_pendente', new ValueStrategy);
+            $hydrator->addStrategy('qtde_total_12m', new ValueStrategy);
+            $hydrator->addStrategy('qtde_total_6m', new ValueStrategy);
+            $hydrator->addStrategy('qtde_total_3m', new ValueStrategy);
+            $hydrator->addStrategy('med_12m', new ValueStrategy);
+            $hydrator->addStrategy('med_6m', new ValueStrategy);
+            $hydrator->addStrategy('med_3m', new ValueStrategy);
             $stdClass = new StdClass;
             $resultSet = new HydratingResultSet($hydrator, $stdClass);
             $resultSet->initialize($results);
