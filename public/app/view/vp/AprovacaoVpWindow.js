@@ -176,6 +176,7 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                                 },
                                 {
                                     xtype: 'grid',
+                                    minHeight: 80,
                                     store: myStore,
                                     columns:[
                                         {

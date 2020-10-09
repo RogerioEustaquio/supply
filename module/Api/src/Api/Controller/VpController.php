@@ -375,7 +375,7 @@ class VpController extends AbstractRestfulController
                             and e.id_empresa = :idEmpresa
                             and i.id_item = :idItem
                             and c.id_categoria = :idCategoria ) a,
-                            pan_rel_vendas_24_meses b
+                            sjs.pan_rel_vendas_24_meses b
                     where a.emp = b.filial(+)
                     and a.cod_item = b.cod_item(+)
                     order by a.idx desc, a.estoque desc";
