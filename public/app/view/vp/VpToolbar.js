@@ -98,6 +98,38 @@ Ext.define('App.view.vp.VpToolbar', {
             bxStatus.enable();
         });
 
+        var bxCurva = Ext.create('Ext.form.field.ComboBox',{
+            width: 80,
+            name: 'bxcurva',
+            itemId: 'bxcurva',
+            store: Ext.data.Store({
+                fields: [{ name: 'idCurvaAbc' }],
+                proxy: {
+                    type: 'ajax',
+                    url: BASEURL + '/api/Vp/listarcurvas',
+                    reader: {
+                        type: 'json',
+                        root: 'data'
+                    }
+                }
+            }),
+            queryParam: 'idCurvaAbc',
+            queryMode: 'local',
+            displayField: 'idCurvaAbc',
+            valueField: 'idCurvaAbc',
+            emptyText: 'Curva',
+            forceSelection: false,
+            disabled: true,
+            margin: '1 1 1 1',
+            listeners: {
+               
+            }
+        });
+
+        bxCurva.store.load(function(r){
+            bxCurva.enable();
+        });
+
         var btnClean = Ext.create('Ext.button.Button',{
             
             iconCls: 'fa fa-file',
@@ -109,6 +141,7 @@ Ext.define('App.view.vp.VpToolbar', {
                 dtinicio.setValue(null);
                 dtfim.setValue(null);
                 bxStatus.setSelection(null);
+                bxCurva.setSelection(null);
             }
         });
 
@@ -157,6 +190,7 @@ Ext.define('App.view.vp.VpToolbar', {
                 empbx,
                 dtinicio,
                 dtfim,
+                bxCurva,
                 bxStatus,
                 {
                     xtype: 'button',
@@ -189,6 +223,10 @@ Ext.define('App.view.vp.VpToolbar', {
         if(me.down('combobox[name=bxstatus]').getRawValue())
             idStatus = me.down('combobox[name=bxstatus]').selection.data.idStatus;
 
+        var idCurva = '';
+        if(me.down('combobox[name=bxcurva]').getRawValue())
+            idCurva = me.down('combobox[name=bxcurva]').selection.data.idCurvaAbc;
+
         if(idEmpresa == ''){
             Ext.Msg.alert('Alerta','Selecione Empresa.');
             return null;
@@ -202,7 +240,8 @@ Ext.define('App.view.vp.VpToolbar', {
             idEmpresa : idEmpresa,
             dataInicio : dtinicio,
             dataFim : dtfim,
-            idStatus: idStatus
+            idStatus: idStatus,
+            idCurvaAbc: idCurva
         };
 
         storeItens.getProxy().setExtraParams(params);

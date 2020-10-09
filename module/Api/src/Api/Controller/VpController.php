@@ -89,6 +89,7 @@ class VpController extends AbstractRestfulController
         $dataInicio = $this->params()->fromQuery('dataInicio',null);
         $dataFim    = $this->params()->fromQuery('dataFim',null);
         $idStatus   = $this->params()->fromQuery('idStatus',null);
+        $idCurvaAbc = $this->params()->fromQuery('idCurvaAbc',null);
 
         $andSql = '';
 
@@ -110,6 +111,10 @@ class VpController extends AbstractRestfulController
 
         if($idStatus){
             $andSql .= " AND st.id_status = $idStatus";
+        }
+
+        if($idCurvaAbc){
+            $andSql .= " AND T.ID_CURVA_ABC = '$idCurvaAbc'";
         }
         
         try {
@@ -310,6 +315,47 @@ class VpController extends AbstractRestfulController
 
             $hydrator = new ObjectProperty;
             $hydrator->addStrategy('descricao', new ValueStrategy);
+            $stdClass = new StdClass;
+            $resultSet = new HydratingResultSet($hydrator, $stdClass);
+            $resultSet->initialize($results);
+
+            $data = array();
+            foreach ($resultSet as $row) {
+                $data[] = $hydrator->extract($row);
+            }
+
+            $this->setCallbackData($data);
+            $this->setMessage("Solicitação enviada com sucesso.");
+            
+        } catch (\Exception $e) {
+            $this->setCallbackError($e->getMessage());
+        }
+        
+        return $this->getCallbackModel();
+    }
+
+    public function listarcurvasAction()
+    {
+        $data = array();
+        
+        try {
+            $session = $this->getSession();
+            $usuario = $session['info']['usuarioSistema'];
+
+            // $idEmpresa      = $this->params()->fromQuery('idEmpresa',null);
+
+            $em = $this->getEntityManager();
+            $conn = $em->getConnection();
+
+            $sql = "select id_curva_abc from  MS.TB_CURVA_ABC";
+
+            $stmt = $conn->prepare($sql);
+            // $stmt->bindParam(':idEmpresa', $idEmpresa);
+            $stmt->execute();
+            $results = $stmt->fetchAll();
+
+            $hydrator = new ObjectProperty;
+            $hydrator->addStrategy('id_curva_abc', new ValueStrategy);
             $stdClass = new StdClass;
             $resultSet = new HydratingResultSet($hydrator, $stdClass);
             $resultSet->initialize($results);
