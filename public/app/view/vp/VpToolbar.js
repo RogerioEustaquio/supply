@@ -66,6 +66,38 @@ Ext.define('App.view.vp.VpToolbar', {
             emptyText: '__/__/____'
         });
 
+        var bxStatus = Ext.create('Ext.form.field.ComboBox',{
+            width: 100,
+            name: 'bxstatus',
+            itemId: 'bxstatus',
+            store: Ext.data.Store({
+                fields: [{ name: 'idStatus' }, { name: 'descricao' }],
+                proxy: {
+                    type: 'ajax',
+                    url: BASEURL + '/api/Vp/listarstatus',
+                    reader: {
+                        type: 'json',
+                        root: 'data'
+                    }
+                }
+            }),
+            queryParam: 'descricao',
+            queryMode: 'local',
+            displayField: 'descricao',
+            valueField: 'descricao',
+            emptyText: 'Status',
+            forceSelection: false,
+            disabled: true,
+            margin: '1 1 1 1',
+            listeners: {
+               
+            }
+        });
+
+        bxStatus.store.load(function(r){
+            bxStatus.enable();
+        });
+
         var btnClean = Ext.create('Ext.button.Button',{
             
             iconCls: 'fa fa-file',
@@ -76,19 +108,13 @@ Ext.define('App.view.vp.VpToolbar', {
                 empbx.setSelection(null);
                 dtinicio.setValue(null);
                 dtfim.setValue(null);
+                bxStatus.setSelection(null);
             }
         });
 
-        var array = [
-                        {
-                            id_funcionario: USUARIO.id, nome: USUARIO.usuarioSistema, acessos: ['btnAprovar','btnConcluir','btnReprovar']
-                        }
-                    ];
-        // console.log(array);
         var btnAprovar = null;
         var btnConcluir = null;
         var btnReprovar = null;
-                    console.log(App.app.acessos);
 
         if(App.app.acessos.indexOf('btnAprovar') !== -1){
             btnAprovar = Ext.create('Ext.button.Button',{
@@ -131,6 +157,7 @@ Ext.define('App.view.vp.VpToolbar', {
                 empbx,
                 dtinicio,
                 dtfim,
+                bxStatus,
                 {
                     xtype: 'button',
                     iconCls: 'fa fa-search',
@@ -155,9 +182,12 @@ Ext.define('App.view.vp.VpToolbar', {
         var me = btn.up('toolbar');
 
         var idEmpresa = '';
-        
         if(me.down('combobox[name=bxemp]').getRawValue())
             idEmpresa = me.down('combobox[name=bxemp]').selection.data.idEmpresa;
+        
+        var idStatus = '';
+        if(me.down('combobox[name=bxstatus]').getRawValue())
+            idStatus = me.down('combobox[name=bxstatus]').selection.data.idStatus;
 
         if(idEmpresa == ''){
             Ext.Msg.alert('Alerta','Selecione Empresa.');
@@ -171,7 +201,8 @@ Ext.define('App.view.vp.VpToolbar', {
         var params =  {
             idEmpresa : idEmpresa,
             dataInicio : dtinicio,
-            dataFim : dtfim
+            dataFim : dtfim,
+            idStatus: idStatus
         };
 
         storeItens.getProxy().setExtraParams(params);

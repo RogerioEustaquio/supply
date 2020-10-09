@@ -12,7 +12,7 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
 
     initComponent: function(config) {
         var me = this;
-        var utilFormat = Ext.create('Ext.ux.util.Format');
+        // var utilFormat = Ext.create('Ext.ux.util.Format');
 
         var params = {
             idEmpresa: me.vpItem.idEmpresa,
@@ -51,19 +51,24 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
             autoLoad: true
         });
 
-        // myStore.on('render', function(){});
+        var toolcancelar = null;
 
-
-        var btnCancelar = Ext.create('Ext.button.Button',{
-            
-            // iconCls: 'fa fa-times',
-            text: 'Cancelar Solicitação',
-            itemId: 'btncancelarwin',
-            disabled: false,
-            tooltip: 'Cancelar',
-            margin: '1 6 1 1',
-            handler: me.onCancelarClick
-        });
+        if(App.app.acessos.indexOf('btnReprovar') !== -1){
+            toolcancelar = Ext.create('Ext.Toolbar',{
+                region: 'north',
+                items:[
+                    {
+                        xtype: 'button',
+                        text: 'Cancelar Solicitação',
+                        itemId: 'btncancelarwin',
+                        disabled: false,
+                        tooltip: 'Cancelar',
+                        margin: '1 6 1 1',
+                        handler: me.onCancelarClick
+                    }
+                ]
+            });
+        }
 
         Ext.applyIf(me, {
             
@@ -73,13 +78,7 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                     layout: 'border',
                     margin: '0 0 0 0',
                     items:[
-                        {
-                            xtype: 'toolbar',
-                            region: 'north',
-                            items:[
-                                btnCancelar
-                            ]
-                        },
+                        toolcancelar,
                         {
                             xtype: 'form',
                             region: 'center',

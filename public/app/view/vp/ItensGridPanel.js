@@ -222,8 +222,8 @@ Ext.define('App.view.vp.ItensGridPanel', {
                     }
 
                     if(elements.status == 'Cancelado' || elements.status == 'Concluído'){
-                        if(objTool.down('#btnAprovar'))
-                            objTool.down('#btnAprovar').setDisabled(true);
+                        if(objAprovar)
+                            objAprovar.setDisabled(true);
                         if(objConcluir)
                             objConcluir.setDisabled(true);
                         if(objCancelar)

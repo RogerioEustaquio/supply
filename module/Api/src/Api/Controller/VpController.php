@@ -88,6 +88,7 @@ class VpController extends AbstractRestfulController
         $idEmpresa  = $this->params()->fromQuery('idEmpresa',null);
         $dataInicio = $this->params()->fromQuery('dataInicio',null);
         $dataFim    = $this->params()->fromQuery('dataFim',null);
+        $idStatus   = $this->params()->fromQuery('idStatus',null);
 
         $andSql = '';
 
@@ -105,6 +106,10 @@ class VpController extends AbstractRestfulController
 
         if($dataFim){
             $andSql .= " AND trunc(A.DATA_CREATED) <= '$dataFim'";
+        }
+
+        if($idStatus){
+            $andSql .= " AND st.id_status = $idStatus";
         }
         
         try {
@@ -264,6 +269,47 @@ class VpController extends AbstractRestfulController
             $hydrator = new ObjectProperty;
             $hydrator->addStrategy('data', new ValueStrategy);
             $hydrator->addStrategy('status', new ValueStrategy);
+            $stdClass = new StdClass;
+            $resultSet = new HydratingResultSet($hydrator, $stdClass);
+            $resultSet->initialize($results);
+
+            $data = array();
+            foreach ($resultSet as $row) {
+                $data[] = $hydrator->extract($row);
+            }
+
+            $this->setCallbackData($data);
+            $this->setMessage("Solicitação enviada com sucesso.");
+            
+        } catch (\Exception $e) {
+            $this->setCallbackError($e->getMessage());
+        }
+        
+        return $this->getCallbackModel();
+    }
+
+    public function listarstatusAction()
+    {
+        $data = array();
+        
+        try {
+            $session = $this->getSession();
+            $usuario = $session['info']['usuarioSistema'];
+
+            // $idEmpresa      = $this->params()->fromQuery('idEmpresa',null);
+
+            $em = $this->getEntityManager();
+            $conn = $em->getConnection();
+
+            $sql = "select id_status,descricao from x2_vp_status";
+
+            $stmt = $conn->prepare($sql);
+            // $stmt->bindParam(':idEmpresa', $idEmpresa);
+            $stmt->execute();
+            $results = $stmt->fetchAll();
+
+            $hydrator = new ObjectProperty;
+            $hydrator->addStrategy('descricao', new ValueStrategy);
             $stdClass = new StdClass;
             $resultSet = new HydratingResultSet($hydrator, $stdClass);
             $resultSet->initialize($results);
