@@ -199,7 +199,7 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                                         {
                                             text: 'Marca',
                                             dataIndex: 'marca',
-                                            width: 120
+                                            width: 140
                                         },
                                         {
                                             text: 'Estoque',
