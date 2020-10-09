@@ -354,7 +354,7 @@ class VpController extends AbstractRestfulController
                         round(b.qtde_total_12m/12,4) as med_12m,
                         round(b.qtde_total_6m/6,4) as med_6m,
                         round(b.qtde_total_3m/3,4) as med_3
-                    from (select decode(es.id_categoria,20,1,0) as idx, es.id_empresa, es.id_item, es.id_categoria,
+                    from (select decode(es.id_categoria,:idCategoria,1,0) as idx, es.id_empresa, es.id_item, es.id_categoria,
                             e.apelido as emp,
                             i.cod_item||c.descricao as cod_item,
                             i.descricao,
@@ -373,8 +373,7 @@ class VpController extends AbstractRestfulController
                             and ic.id_marca = m.id_marca
                             and es.id_empresa = e.id_empresa
                             and e.id_empresa = :idEmpresa
-                            and i.id_item = :idItem
-                            and c.id_categoria = :idCategoria ) a,
+                            and i.id_item = :idItem) a,
                             sjs.pan_rel_vendas_24_meses b
                     where a.emp = b.filial(+)
                     and a.cod_item = b.cod_item(+)
