@@ -353,7 +353,7 @@ class VpController extends AbstractRestfulController
                         b.qtde_total_3m,
                         round(b.qtde_total_12m/12,4) as med_12m,
                         round(b.qtde_total_6m/6,4) as med_6m,
-                        round(b.qtde_total_3m/3,4) as med_3
+                        round(b.qtde_total_3m/3,4) as med_3m
                     from (select decode(es.id_categoria,:idCategoria,1,0) as idx, es.id_empresa, es.id_item, es.id_categoria,
                             e.apelido as emp,
                             i.cod_item||c.descricao as cod_item,

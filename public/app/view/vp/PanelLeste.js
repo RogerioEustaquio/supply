@@ -100,7 +100,7 @@ Ext.define('App.view.vp.PanelLeste', {
                         getAdditionalData: function (data, idx, record, orig) {
 
                             return {
-                                rowBody: '<span>' +  record.get("status") + ': ' + record.get("comentario") + '</span>',
+                                rowBody: '<span>' +  (record.get("comentario") ? record.get("status") + ': ' + record.get("comentario") : '') + '</span>',
                                 rowBodyCls: "grid-body-cls"
                             };
                         }
