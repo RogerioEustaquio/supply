@@ -63,13 +63,14 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
                             xtype: 'form',
                             region: 'center',
                             border: false,
-                            // padding: 5,
+                            scrollable: true,
                             bodyPadding: '5 5 5 5',
                             items: [
                                 {
                                     xtype: 'form',
                                     layout: 'hbox',
                                     border: false,
+                            scrollable: true,
                                     items: [
                                         {
                                             xtype: 'fieldset',

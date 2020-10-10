@@ -92,7 +92,7 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
                                             xtype: 'fieldset',
                                             title: '<b>Quantidade Vp</b>',
                                             defaultType: 'textfield',
-                                            width: '10%',
+                                            width: '11%',
                                             margin: '0 6 6 0',
                                             defaults: {
                                                 anchor: '100%'

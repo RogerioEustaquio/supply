@@ -83,7 +83,7 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                             xtype: 'form',
                             region: 'center',
                             border: false,
-                            // padding: 5,
+                            scrollable: true,
                             bodyPadding: '5 5 5 5',
                             items: [
                                 {
