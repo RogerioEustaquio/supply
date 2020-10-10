@@ -98,6 +98,27 @@ Ext.define('App.view.vp.VpToolbar', {
             bxStatus.enable();
         });
 
+        var bxestoque = Ext.create('Ext.form.field.ComboBox',{
+            name: 'bxestoque',
+            itemId: 'bxestoque',
+            // fieldLabel: 'Estoque',
+            emptyText: 'Estoque',
+            width: 100,
+            margin: '2 2 2 2',
+            store: Ext.create('Ext.data.Store', {
+                        fields: ['estoque', 'name'],
+                        data : [
+                            {"estoque":"S", "name":"Disponível"},
+                            {"estoque":"N", "name":"Zerado"},
+                            ]
+                    }),
+            queryMode: 'local',
+            queryParam: 'Estoque',
+            displayField: 'name',
+            valueField: 'estoque'
+            
+        });
+
         var bxCurva = Ext.create('Ext.form.field.ComboBox',{
             width: 80,
             name: 'bxcurva',
@@ -142,6 +163,7 @@ Ext.define('App.view.vp.VpToolbar', {
                 dtfim.setValue(null);
                 bxStatus.setSelection(null);
                 bxCurva.setSelection(null);
+                bxestoque.setSelection(null);
             }
         });
 
@@ -191,6 +213,7 @@ Ext.define('App.view.vp.VpToolbar', {
                 dtinicio,
                 dtfim,
                 bxCurva,
+                bxestoque,
                 bxStatus,
                 {
                     xtype: 'button',
@@ -235,17 +258,19 @@ Ext.define('App.view.vp.VpToolbar', {
         var storeItens  = me.up('panel').down('grid').getStore();
         var dtinicio    = me.down('datefield[name=dtinicio]').getRawValue();
         var dtfim       = me.down('datefield[name=dtfim]').getRawValue();
+        var estoque     = me.down('combobox[name=bxestoque]').getValue();
 
         var params =  {
-            idEmpresa : idEmpresa,
+            idEmpresa  : idEmpresa,
             dataInicio : dtinicio,
-            dataFim : dtfim,
-            idStatus: idStatus,
-            idCurvaAbc: idCurva
+            dataFim    : dtfim,
+            idStatus   : idStatus,
+            idCurvaAbc : idCurva,
+            estoque    : estoque
         };
 
         storeItens.getProxy().setExtraParams(params);
-        storeItens.load();
+        storeItens.loadPage(1);;
 
     },
 

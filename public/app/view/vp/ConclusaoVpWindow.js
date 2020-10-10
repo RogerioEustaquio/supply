@@ -63,6 +63,7 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
                             xtype: 'form',
                             region: 'center',
                             border: false,
+                            scrollable: true,
                             // padding: 5,
                             bodyPadding: '5 5 5 5',
                             items: [

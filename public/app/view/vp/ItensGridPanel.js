@@ -4,8 +4,15 @@ Ext.define('App.view.vp.ItensGridPanel', {
     // id: 'ItensGridPanel',
     margin: '1 1 1 1',
     requeri:[
+        'Ext.toolbar.Paging',
         'Ext.ux.util.Format'
     ],
+    bbar: {
+        xtype: 'pagingtoolbar',
+        displayInfo: true,
+        displayMsg: 'Exibindo solicitações {0} - {1} de {2}',
+        emptyMsg: "Não há solicitações a serem exibidos"
+    },
     initComponent: function() {
         var me = this;
 
@@ -65,6 +72,7 @@ Ext.define('App.view.vp.ItensGridPanel', {
                             {name:'status',mapping:'status',  type: 'string'}
                             ]
             }),
+            pageSize: 50,
             proxy: {
                 type: 'ajax',
                 // method:'POST',

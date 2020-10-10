@@ -90,6 +90,9 @@ class VpController extends AbstractRestfulController
         $dataFim    = $this->params()->fromQuery('dataFim',null);
         $idStatus   = $this->params()->fromQuery('idStatus',null);
         $idCurvaAbc = $this->params()->fromQuery('idCurvaAbc',null);
+        $estoque    = $this->params()->fromQuery('estoque',null);
+        $inicio     = $this->params()->fromQuery('start',null);
+        $final      = $this->params()->fromQuery('limit',null);
 
         $andSql = '';
 
@@ -116,6 +119,12 @@ class VpController extends AbstractRestfulController
         if($idCurvaAbc){
             $andSql .= " AND T.ID_CURVA_ABC = '$idCurvaAbc'";
         }
+
+        if($estoque == 'S'){
+            $andSql .= " AND nvl(pkg_x2_help_estoque.get_estoque_posicao_qtde(A.ID_EMPRESA, A.ID_ITEM, A.ID_CATEGORIA, A.DATA_CREATED),0) > 0";
+        }elseif($estoque == 'N'){
+            $andSql .= " AND nvl(pkg_x2_help_estoque.get_estoque_posicao_qtde(A.ID_EMPRESA, A.ID_ITEM, A.ID_CATEGORIA, A.DATA_CREATED),0) = 0";
+        }
         
         try {
 
@@ -123,6 +132,7 @@ class VpController extends AbstractRestfulController
             $usuario = $session['info'];
 
             $em = $this->getEntityManager();
+            $conn = $em->getConnection();
 
             $sql = "--CREATE TABLE TMP_VP_SOLICITACAO AS
                 SELECT A.ID_EMPRESA,
@@ -189,9 +199,19 @@ class VpController extends AbstractRestfulController
                 --and rownum <= 5
                 order by data_order desc";
 
-            $conn = $em->getConnection();
+            $sql1 = "select count(*) as totalCount from ($sql)";
+            $stmt = $conn->prepare($sql1);
+            $stmt->execute();
+            $resultCount = $stmt->fetchAll();
+
+            $sql = "
+                SELECT PGN.*
+                    FROM (SELECT ROWNUM AS RNUM, PGN.*
+                            FROM ($sql) PGN) PGN
+                    WHERE RNUM BETWEEN " . ($inicio +1 ) . " AND " . ($inicio + $final) . "
+            ";
+
             $stmt = $conn->prepare($sql);
-            
             $stmt->execute();
             $results = $stmt->fetchAll();
 
@@ -214,7 +234,10 @@ class VpController extends AbstractRestfulController
             $this->setCallbackError($e->getMessage());
         }
         
-        return $this->getCallbackModel();
+        $objReturn = $this->getCallbackModel();
+        $objReturn->total = $resultCount[0]['TOTALCOUNT'];
+
+        return $objReturn;
     }
 
     public function listarvpcomentarioAction()
@@ -347,7 +370,7 @@ class VpController extends AbstractRestfulController
             $em = $this->getEntityManager();
             $conn = $em->getConnection();
 
-            $sql = "select id_curva_abc from  MS.TB_CURVA_ABC";
+            $sql = "select id_curva_abc from MS.TB_CURVA_ABC";
 
             $stmt = $conn->prepare($sql);
             // $stmt->bindParam(':idEmpresa', $idEmpresa);
