@@ -127,7 +127,7 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
                                             xtype: 'fieldset',
                                             title: '<b>Estoque Vp</b>',
                                             defaultType: 'textfield',
-                                            width: '8%',
+                                            width: '9%',
                                             margin: '0 6 6 0',
                                             defaults: {
                                                 anchor: '100%'
