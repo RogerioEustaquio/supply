@@ -280,7 +280,6 @@ class VpController extends AbstractRestfulController
             $hydrator = new ObjectProperty;
             $hydrator->addStrategy('VP_DATA_LANCAMENTO', new ValueStrategy);
             $hydrator->addStrategy('VP_QTDE', new ValueStrategy);
-            $hydrator->addStrategy('status', new ValueStrategy);
             $stdClass = new StdClass;
             $resultSet = new HydratingResultSet($hydrator, $stdClass);
             $resultSet->initialize($results);
