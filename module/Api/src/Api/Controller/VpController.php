@@ -155,8 +155,8 @@ class VpController extends AbstractRestfulController
                         H.NOME AS VP_FUNCIONARIO_VENDA,
                         A.QTDE_ITEM AS VP_QTDE,
                         A.OBSERVACAO AS VP_COMENTARIO,
-                        'Teste Aprovacao' VP_APROVACAO_COMENTARIO,
-                        'Teste Conclusao' VP_CONCLUSAO_COMENTARIO,
+                        (select comentario from PRICING.X2_VP_COMENTARIO where id_empresa = A.ID_EMPRESA and id_venda_perdida = A.ID_VENDA_PERDIDA and id_status = 2 and rownum = 1) VP_APROVACAO_COMENTARIO,
+                        (select comentario from PRICING.X2_VP_COMENTARIO where id_empresa = A.ID_EMPRESA and id_venda_perdida = A.ID_VENDA_PERDIDA and id_status = 4 and rownum = 1) VP_CONCLUSAO_COMENTARIO,
                         nvl(pkg_x2_help_estoque.get_estoque_posicao_qtde(A.ID_EMPRESA, A.ID_ITEM, A.ID_CATEGORIA, A.DATA_CREATED),0) AS VP_ESTOQUE,
                         pkg_x2_help_estoque.get_estoque_ruptura_eventos(A.ID_EMPRESA, A.ID_ITEM, A.ID_CATEGORIA, A.DATA_CREATED, 180) AS VP_EVENTOS_RUPTURA_180D,
                         pkg_x2_help_estoque.get_estoque_ruptura_dias(A.ID_EMPRESA, A.ID_ITEM, A.ID_CATEGORIA, A.DATA_CREATED, 180) AS VP_DIAS_RUPTURA_180D,
@@ -194,7 +194,7 @@ class VpController extends AbstractRestfulController
                 AND A.ID_EMPRESA = H.ID_EMPRESA
                 and a.id_empresa = sl.id_empresa(+)
                 and a.id_venda_perdida = sl.id_venda_perdida(+)
-                and sl.id_status = st.id_status(+) 
+                and sl.id_status = st.id_status(+)
                 $andSql
                 --and rownum <= 5
                 order by data_order desc";
