@@ -2,7 +2,7 @@ Ext.define('App.view.vp.CancelamentoVpWindow', {
     extend: 'Ext.window.Window',
     xtype: 'cancelamentovpwindow',
     itemId: 'cancelamentovpwindow',
-    height: Ext.getBody().getHeight() * 0.8,
+    height: Ext.getBody().getHeight() * 0.9,
     width: Ext.getBody().getWidth() * 0.9,
     title: 'Cancelamento de Comentário de Venda Perdida',
     requires:[

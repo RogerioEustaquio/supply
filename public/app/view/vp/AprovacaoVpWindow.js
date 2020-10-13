@@ -2,7 +2,7 @@ Ext.define('App.view.vp.AprovacaoVpWindow', {
     extend: 'Ext.window.Window',
     xtype: 'aprovacaovpwindow',
     itemId: 'aprovacaovpwindow',
-    height: Ext.getBody().getHeight() * 0.8,
+    height: Ext.getBody().getHeight() * 0.9,
     width: Ext.getBody().getWidth() * 0.9,
     title: 'Aprovação de venda perdida',
     requires: [],

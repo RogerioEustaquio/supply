@@ -2,7 +2,7 @@ Ext.define('App.view.vp.ConclusaoVpWindow', {
     extend: 'Ext.window.Window',
     xtype: 'conclusaovpwindow',
     itemId: 'conclusaovpwindow',
-    height: Ext.getBody().getHeight() * 0.8,
+    height: Ext.getBody().getHeight() * 0.9,
     width: Ext.getBody().getWidth() * 0.9,
     title: 'Conclusão de Venda Perdida',
     requires:[
