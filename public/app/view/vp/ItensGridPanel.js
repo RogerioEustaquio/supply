@@ -128,7 +128,7 @@ Ext.define('App.view.vp.ItensGridPanel', {
                 {
                     text: 'Tipo',
                     dataIndex: 'tipo',
-                    width: 100
+                    width: 140
                 },
                 {
                     text: 'Cod. Cli.',
